@@ -1,0 +1,12 @@
+{
+  "name": "RuleJS",
+  "version": "0.0.1",
+  "ignore": [
+    "**/.*",
+    "node_modules"
+  ],
+  "dependencies": {
+    "formulajs": "https://github.com/sutoiku/formula.js.git#056ffde34d69edd9f68d5436892c0c73fbac5921",
+    "jstat": "https://github.com/jstat/jstat.git#0243df188ac3474c9116a80acc332a8c20125eef"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "name": "numericjs",
+  "homepage": "https://github.com/sloisel/numeric",
+  "version": "1.2.6",
+  "_release": "1.2.6",
+  "_resolution": {
+    "type": "version",
+    "tag": "v1.2.6",
+    "commit": "656fa1254be540f428710738ca9c1539625777f1"
+  },
+  "_source": "git://github.com/sloisel/numeric.git",
+  "_target": "1.2.6",
+  "_originalSource": "numericjs"
+}
