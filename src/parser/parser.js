@@ -90,7 +90,7 @@ case 1:
 break;
 case 2:
 
-        this.$ = yy.handler.variable.apply(yy.obj, $$[$0]);
+        this.$ = ruleJS.helper.callVariable.call(this, $$[$0]);
       
 break;
 case 3:

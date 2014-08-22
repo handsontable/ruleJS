@@ -1,5 +1,6 @@
 /* description: Parses end evaluates mathematical expressions. */
 /* lexical grammar */
+/* TODO: define grammar and handlers for cell and time */
 %lex
 %%
 \s+									                                                            {/* skip whitespace */}
@@ -69,7 +70,7 @@ expressions
 
 expression
     : variableSequence {
-        $$ = yy.handler.variable.apply(yy.obj, $1);
+        $$ = ruleJS.helper.callVariable.call(this, $1);
       }
     | TIME_AMPM {
         $$ = yy.handler.time.call(yy.obj, $1, true);

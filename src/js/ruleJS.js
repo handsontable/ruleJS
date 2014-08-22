@@ -1,4 +1,10 @@
-var ruleJS = (function () {
+/*
+* TODO:
+* 1) error handling
+* 2) tests
+* */
+
+ var ruleJS = (function () {
   'use strict';
 
   /**
@@ -101,6 +107,25 @@ var ruleJS = (function () {
       if (formulas[fn]) {
         return formulas[fn].apply(this, args);
       }
+    },
+
+    /**
+     * get variable
+     * @param {Array} args
+     * @returns {*}
+     */
+    callVariable: function (args) {
+      args = args || [];
+      var str = args[0];
+
+      if (str) {
+        str = str.toUpperCase();
+        if (formulas[str]) {
+          return ((typeof formulas[str] === 'function') ? formulas[str].apply(this, args) : formulas[str]);
+        }
+      }
+
+      return false;
     }
   };
 
