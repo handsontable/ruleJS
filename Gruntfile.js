@@ -40,10 +40,6 @@ module.exports = function (grunt) {
               dest: 'dist/index.html'
             },
             {
-              src: 'lib/requirejs/require.js',
-              dest: 'dist/lib/requirejs/require.js'
-            },
-            {
               src: 'lib/underscore.string/lib/underscore.string.js',
               dest: 'dist/lib/underscore.string/underscore.string.js'
             },
