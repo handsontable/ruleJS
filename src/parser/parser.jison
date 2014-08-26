@@ -14,8 +14,8 @@
                                                                                   return 'VARIABLE';
                                                                                 }
 [A-Za-z]+[0-9]+                                                                 {
-                                                                                  if (yy.obj.type == 'cell') return 'CELL';//js
-                                                                                  return 'VARIABLE';//js
+                                                                                  if (yy.obj.type == 'cell') return 'CELL';
+                                                                                  return 'VARIABLE';
                                                                                 }
 [A-Za-z]+(?=[(])    				                                                    {return 'FUNCTION';}
 [A-Za-z]{1,}[A-Za-z_0-9]+			                                                  {return 'VARIABLE';}
@@ -35,6 +35,8 @@
 "^" 								                                                            {return '^';}
 "(" 								                                                            {return '(';}
 ")" 								                                                            {return ')';}
+"[" 								                                                            {return '[';}
+"]" 								                                                            {return ']';}
 ">" 								                                                            {return '>';}
 "<" 								                                                            {return '<';}
 "NOT"								                                                            {return 'NOT';}
@@ -173,8 +175,29 @@ cell
 ;
 
 expseq
+  : '[' expseq ']' {
+      $$ = [$2];
+  }
+  | expseq ',' expseq {
+      //$1.push($3);
+      //$$ = $1;
+      $$.push($3);
+  }
+  | expseq ',' expression {
+        //$1.push($3);
+        //$$ = $1;
+        $$.push($3);
+    }
+;
+
+
+expseq
   : expression {
-      $$ = [$1];
+      if (ruleJS.helper.isArray($1)) {
+        $$ = $1;
+      } else {
+        $$ = [$1];
+      }
     }
 	| expseq ';' expression {
       $1.push($3);
@@ -191,7 +214,7 @@ variableSequence
       $$ = [$1];
     }
 	| variableSequence DECIMAL VARIABLE {
-      $$ = ($.isArray($1) ? $1 : [$1]);
+      $$ = (ruleJS.helper.isArray($1) ? $1 : [$1]);
       $$.push($3);
     }
 ;
@@ -218,25 +241,3 @@ error
 ;
 
 %%
-/*
-if (typeof(window) !== 'undefined') {
-	window.FormulaParser = function(handler) {
-		var formulaLexer = function () {};
-		formulaLexer.prototype = parser.lexer;
-
-		var formulaParser = function () {
-			this.lexer = new formulaLexer();
-			this.yy = {};
-		};
-
-		formulaParser.prototype = parser;
-		var newParser = new formulaParser;
-		newParser.setObj = function(obj) {
-			newParser.yy.obj = obj;
-		};
-
-		newParser.yy.handler = handler;
-		return newParser;
-	};
-}
-*/

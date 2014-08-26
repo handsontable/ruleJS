@@ -96,16 +96,6 @@ module.exports = function (grunt) {
 //        ]
 //			},
 //
-//      // CONCAT FILES
-//      concat: {
-//        dist: {
-//          files: {
-//            'dist/js/ruleJS-full.js': [
-//              '<%= ruleJS.full %>'
-//            ]
-//          }
-//        }
-//      },
 
       // WATCH CHANGES
       watch: {

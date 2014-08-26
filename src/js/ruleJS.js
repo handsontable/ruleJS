@@ -32,6 +32,14 @@
    */
   var helper = {
     /**
+     * check if value is array
+     * @param value
+     * @returns {boolean}
+     */
+    isArray: function (value) {
+      return Object.prototype.toString.call(value) === '[object Array]';
+    },
+    /**
      * get number
      * @param  {Number|String} num
      * @returns {Number}
@@ -153,8 +161,31 @@
 
   return {
     version: version,
-
+    formulas: formulas,
     helper: helper,
     parse: parse
   };
 })();
+
+/*
+if (typeof(window) !== 'undefined') {
+  window.FormulaParser = function(handler) {
+    var formulaLexer = function () {};
+    formulaLexer.prototype = parser.lexer;
+
+    var formulaParser = function () {
+      this.lexer = new formulaLexer();
+      this.yy = {};
+    };
+
+    formulaParser.prototype = parser;
+    var newParser = new formulaParser;
+    newParser.setObj = function(obj) {
+      newParser.yy.obj = obj;
+    };
+
+    newParser.yy.handler = handler;
+    return newParser;
+  };
+}
+*/
