@@ -122,7 +122,42 @@ module.exports = function (grunt) {
           }
         }
       },
-
+      jasmine: {
+        ruleJS: {
+          src: [
+            'dist/js/ruleJS.js',
+            'dist/js/parser.js'
+          ],
+          options: {
+            specs: [
+              'test/jasmine/spec/*Spec.js',
+              'test/jasmine/spec/*/*Spec.js'
+            ],
+            styles: [
+              'test/jasmine/css/SpecRunner.css'
+            ],
+            vendor: [
+              'dist/lib/underscore.string/underscore.string.js',
+              'dist/lib/moment/moment.js',
+              'dist/lib/lodash/lodash.js',
+              'dist/lib/numeral/numeral.js',
+              'dist/lib/numericjs/numeric.js',
+              'dist/lib/js-md5/md5.js',
+              'dist/lib/jstat/jstat.js',
+              'dist/lib/formulajs/formula.js',
+              'test/jasmine/lib/jasmine-extensions.js'
+            ],
+            helpers: [
+              'test/jasmine/spec/SpecHelper.js',
+              'test/jasmine/lib/nodeShim.js',
+              'test/jasmine/spec/test-init.js'
+            ],
+            outfile: 'test/jasmine/SpecRunner.html',
+            template: 'test/jasmine/templates/SpecRunner.tmpl',
+            keepRunner: true
+          }
+        }
+      },
       connect: {
         dev: {
           options: {
@@ -138,6 +173,8 @@ module.exports = function (grunt) {
 
   // DEFAULT TASKS
   grunt.registerTask('default', ['jison', 'copy', 'replace:dist', 'clean']);
+  grunt.registerTask('test', ['default', 'jasmine']);
+  grunt.registerTask('test:ruleJS', ['default', 'jasmine:ruleJS']);
   grunt.registerTask('dev', ['config:dev', 'inject', 'replace:dist', 'clean', 'uglify']);
   grunt.registerTask('prod', ['config:prod', 'inject', 'replace:dist', 'clean', 'copy', 'uglify']);
   grunt.registerTask('uat', ['config:uat', 'inject', 'replace:dist', 'clean', 'copy', 'uglify']);
