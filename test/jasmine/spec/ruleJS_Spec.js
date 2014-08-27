@@ -135,7 +135,7 @@ describe('parse()', function () {
     expect(parsed.result).toBe(-1.65068);
   });
 
-  it('BETADIST(2, 8, 10, true, 1, 3)', function () {
+  it('BETADIST', function () {
     parsed = ruleJS.parse("ROUND(BETADIST(2, 8, 10, true, 1, 3),5)");
     expect(parsed.result).toBe(0.68547);
   });
@@ -264,4 +264,38 @@ describe('parse()', function () {
     expect(parsed.result).toBe(3);
   });
 
+  it('COVARIANCEP', function () {
+    parsed = ruleJS.parse("COVARIANCEP([3,2,4,5,6], [9,7,12,15,17])");
+    expect(parsed.result).toBe(5.2);
+  });
+
+  it('COVARIANCES', function () {
+    parsed = ruleJS.parse("ROUND(COVARIANCES([2,4,8], [5,11,12]),5)");
+    expect(parsed.result).toBe(9.66667);
+  });
+
+  it('EXPONDIST', function () {
+    parsed = ruleJS.parse("ROUND(EXPONDIST(0.2, 10, true),5)");
+    expect(parsed.result).toBe(0.86466);
+  });
+
+  it('FDIST', function () {
+    parsed = ruleJS.parse("ROUND(FDIST(15.2069, 6, 4, false),5)");
+    expect(parsed.result).toBe(0.00122);
+  });
+
+  it('FINV', function () {
+    parsed = ruleJS.parse("ROUND(FINV(0.01, 6, 4),5)");
+    expect(parsed.result).toBe(15.20686);
+  });
+
+  it('FISHER', function () {
+    parsed = ruleJS.parse("ROUND(FISHER(0.75),5)");
+    expect(parsed.result).toBe(0.97296);
+  });
+
+  it('FISHERINV', function () {
+    parsed = ruleJS.parse("FISHERINV(0.9729550745276566)");
+    expect(parsed.result).toBe(0.75);
+  });
 });
