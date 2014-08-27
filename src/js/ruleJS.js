@@ -134,6 +134,44 @@
       }
 
       return false;
+    },
+
+    /**
+     * Get cell value
+     * @param {String} id
+     * @returns {*}
+     */
+    cellValue: function (id) {
+
+    },
+
+    /**
+     * Get cell range values
+     * @param {String} start
+     * @param {String} end
+     * @returns {Array}
+     */
+    cellRangeValue: function (start, end) {
+
+    },
+
+    /**
+     * Get fixed cell value
+     * @param {String} id
+     * @returns {*}
+     */
+    fixedCellValue: function (id) {
+
+    },
+
+    /**
+     * Get fixed cell range values
+     * @param {String} start
+     * @param {String} end
+     * @returns {Array}
+     */
+    fixedCellRangeValue: function (start, end) {
+
     }
   };
 

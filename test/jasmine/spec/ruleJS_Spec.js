@@ -229,6 +229,31 @@ describe('parse()', function () {
     expect(parsed.result).toBe(1.83258);
   });
 
+  it('CODE', function () {
+    parsed = ruleJS.parse("CODE('A')");
+    expect(parsed.result).toBe(65);
+  });
+
+  it('COMBIN', function () {
+    parsed = ruleJS.parse("COMBIN(8, 2)");
+    expect(parsed.result).toBe(28);
+  });
+
+  it('COMBINA', function () {
+    parsed = ruleJS.parse("COMBINA(4, 3)");
+    expect(parsed.result).toBe(20);
+  });
+
+  it('COMPLEX', function () {
+    parsed = ruleJS.parse("COMPLEX(3, 4)");
+    expect(parsed.result).toBe("3+4i");
+  });
+
+  it('CONCATENATE', function () {
+    parsed = ruleJS.parse("CONCATENATE('Andreas', ' ', 'Hauser')");
+    expect(parsed.result).toBe("Andreas Hauser");
+  });
+
   it('CONFIDENCENORM', function () {
     parsed = ruleJS.parse("ROUND(CONFIDENCENORM(0.05, 2.5, 50),5)");
     expect(parsed.result).toBe(0.69295);
@@ -237,6 +262,36 @@ describe('parse()', function () {
   it('CONFIDENCET', function () {
     parsed = ruleJS.parse("ROUND(CONFIDENCET(0.05, 1, 50), 5)");
     expect(parsed.result).toBe(0.2842);
+  });
+
+  it('CONVERT', function () {
+    parsed = ruleJS.parse("CONVERT(64, 'kibyte', 'bit')");
+    expect(parsed.result).toBe(524288);
+  });
+
+  it('CORREL', function () {
+    parsed = ruleJS.parse("ROUND(CORREL([3,2,4,5,6], [9,7,12,15,17]),5)");
+    expect(parsed.result).toBe(0.99705);
+  });
+
+  it('COS', function () {
+    parsed = ruleJS.parse("ROUND(COS(1),5)");
+    expect(parsed.result).toBe(0.5403);
+  });
+
+  it('COSH', function () {
+    parsed = ruleJS.parse("ROUND(COSH(1),5)");
+    expect(parsed.result).toBe(1.54308);
+  });
+
+  it('COT', function () {
+    parsed = ruleJS.parse("ROUND(COT(30),5)");
+    expect(parsed.result).toBe(-0.15612);
+  });
+
+  it('COTH', function () {
+    parsed = ruleJS.parse("ROUND(COTH(2),5)");
+    expect(parsed.result).toBe(1.03731);
   });
 
   it('COUNT', function () {
@@ -259,6 +314,16 @@ describe('parse()', function () {
     expect(parsed.result).toBe(3);
   });
 
+  it('COUNTIFS', function () {
+    parsed = ruleJS.parse("COUNTIFS([2,4,8,16], [1,2,3,4], '>=2', [1,2,4,8], '<=4')");
+    expect(parsed.result).toBe(2);
+  });
+
+  it('COUNTIN', function () {
+    parsed = ruleJS.parse("COUNTIN([1,3,1],1)");
+    expect(parsed.result).toBe(2);
+  });
+
   it('COUNTUNIQUE', function () {
     parsed = ruleJS.parse("COUNTUNIQUE([1,1,2,2,3,3])");
     expect(parsed.result).toBe(3);
@@ -272,6 +337,154 @@ describe('parse()', function () {
   it('COVARIANCES', function () {
     parsed = ruleJS.parse("ROUND(COVARIANCES([2,4,8], [5,11,12]),5)");
     expect(parsed.result).toBe(9.66667);
+  });
+
+  it('CSC', function () {
+    parsed = ruleJS.parse("ROUND(CSC(15),5)");
+    expect(parsed.result).toBe(1.53778);
+  });
+
+  it('CSCH', function () {
+    parsed = ruleJS.parse("ROUND(CSCH(1.5),5)");
+    expect(parsed.result).toBe(0.46964);
+  });
+
+  it('CUMIPMT', function () {
+    parsed = ruleJS.parse("ROUND(CUMIPMT('0.1/12', '30*12', 100000, 13, 24, 0),5)");
+    expect(parsed.result).toBe(-9916.77251);
+  });
+
+  it('CUMPRINC', function () {
+    parsed = ruleJS.parse("ROUND(CUMPRINC('0.1/12', '30*12', 100000, 13, 24, 0),5)");
+    expect(parsed.result).toBe(-614.08633);
+  });
+
+  it('DATE', function () {
+    parsed = ruleJS.parse("DATE(2008, 7, 8)");
+    expect(parsed.result.toString()).toBe("Tue Jul 08 2008 00:00:00 GMT+0200 (CEST)");
+  });
+
+  it('DATEVALUE', function () {
+    parsed = ruleJS.parse("DATEVALUE('8/22/2011')");
+    expect(parsed.result).toBe(40777);
+  });
+
+  it('DAY', function () {
+    parsed = ruleJS.parse("DAY('15-Apr-11')");
+    expect(parsed.result).toBe(15);
+  });
+
+  it('DAYS', function () {
+    parsed = ruleJS.parse("DAYS('3/15/11', '2/1/11')");
+    expect(parsed.result).toBe(42);
+  });
+
+  it('DAYS360', function () {
+    parsed = ruleJS.parse("DAYS360('1-Jan-11', '31-Dec-11')");
+    expect(parsed.result).toBe(360);
+  });
+
+  it('DB', function () {
+    parsed = ruleJS.parse("DB(1000000, 100000, 6, 1, 6)");
+    expect(parsed.result).toBe(159500);
+  });
+
+  it('DDB', function () {
+    parsed = ruleJS.parse("DDB(1000000, 100000, 6, 1, 1.5)");
+    expect(parsed.result).toBe(250000);
+  });
+
+  it('DEC2BIN', function () {
+    parsed = ruleJS.parse("DEC2BIN(42)");
+    expect(parsed.result).toBe("101010");
+  });
+
+  it('DEC2HEX', function () {
+    parsed = ruleJS.parse("DEC2HEX(42)");
+    expect(parsed.result).toBe("2a");
+  })
+
+  it('DEC2OCT', function () {
+    parsed = ruleJS.parse("DEC2OCT(42)");
+    expect(parsed.result).toBe("52");
+  });
+
+  it('DECIMAL', function () {
+    parsed = ruleJS.parse("DECIMAL('FF', 16)");
+    expect(parsed.result).toBe(255);
+  });
+
+  it('DEGREES', function () {
+    parsed = ruleJS.parse("DEGREES(PI())");
+    expect(parsed.result).toBe(180);
+  });
+
+  it('DELTA', function () {
+    parsed = ruleJS.parse("DELTA(42, 42)");
+    expect(parsed.result).toBe(1);
+  });
+
+  it('DEVSQ', function () {
+    parsed = ruleJS.parse("DEVSQ([2,4,8,16])");
+    expect(parsed.result).toBe(115);
+  });
+
+  it('DOLLAR', function () {
+    parsed = ruleJS.parse("DOLLAR(-0.123, 4)");
+    expect(parsed.result).toBe("($0.1230)");
+  });
+
+  it('DOLLARDE', function () {
+    parsed = ruleJS.parse("DOLLARDE(1.1, 16)");
+    expect(parsed.result).toBe(1.625);
+  });
+
+  it('DOLLARFR', function () {
+    parsed = ruleJS.parse("DOLLARFR(1.625, 16)");
+    expect(parsed.result).toBe(1.1);
+  });
+
+  it('E', function () {
+    parsed = ruleJS.parse("ROUND(E(),5)");
+    expect(parsed.result).toBe(2.71828);
+  });
+
+  it('EDATE', function () {
+    parsed = ruleJS.parse("EDATE('1/15/11', -1)");
+    expect(parsed.result.toString()).toBe("Wed Dec 15 2010 00:00:00 GMT+0100 (CET)");
+  });
+
+  it('EFFECT', function () {
+    parsed = ruleJS.parse("ROUND(EFFECT(0.1, 4),5)");
+    expect(parsed.result).toBe(0.10381);
+  });
+
+  it('EOMONTH', function () {
+    parsed = ruleJS.parse("EOMONTH('1/1/11', -3)");
+    expect(parsed.result.toString()).toBe("Sun Oct 31 2010 00:00:00 GMT+0200 (CEST)");
+  });
+
+  it('ERF', function () {
+    parsed = ruleJS.parse("ROUND(ERF(1),5)");
+    expect(parsed.result).toBe(0.8427);
+  });
+
+  it('ERFC', function () {
+    parsed = ruleJS.parse("ROUND(ERFC(1),5)");
+    expect(parsed.result).toBe(0.1573);
+  });
+
+  it('EVEN', function () {
+    parsed = ruleJS.parse("EVEN(-1)");
+    expect(parsed.result).toBe(-2);
+  });
+
+  it('EXACT', function () {
+    parsed = ruleJS.parse("EXACT('Word', 'Word')");
+    expect(parsed.result).toBe(true);
+
+    parsed = ruleJS.parse("EXACT('Word', 'word')");
+    expect(parsed.result).toBe(false);
   });
 
   it('EXPONDIST', function () {

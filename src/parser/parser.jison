@@ -160,16 +160,16 @@ expression
 
 cell
    : FIXEDCELL {
-      $$ = yy.handler.fixedCellValue.call(yy.obj, $1);
+      $$ = ruleJS.helper.fixedCellValue.call(yy.obj, $1);
     }
   | FIXEDCELL ':' FIXEDCELL {
-      $$ = yy.handler.fixedCellRangeValue.call(yy.obj, $1, $3);
+      $$ = ruleJS.helper.fixedCellRangeValue.call(yy.obj, $1, $3);
     }
   | CELL {
-      $$ = yy.handler.cellValue.call(yy.obj, $1);
+      $$ = ruleJS.helper.cellValue.call(yy.obj, $1);
     }
   | CELL ':' CELL {
-      $$ = yy.handler.cellRangeValue.call(yy.obj, $1, $3);
+      $$ = ruleJS.helper.cellRangeValue.call(yy.obj, $1, $3);
     }
 ;
 
