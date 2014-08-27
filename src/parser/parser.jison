@@ -21,6 +21,7 @@
 [A-Za-z]{1,}[A-Za-z_0-9]+			                                                  {return 'VARIABLE';}
 [A-Za-z_]+           				                                                    {return 'VARIABLE';}
 [0-9]+          			  		                                                    {return 'NUMBER';}
+'['(.*)?']'                                                                     {return 'ARRAY';}
 "$"									                                                            {/* skip whitespace */}
 "&"                                                                             {return '&';}
 " "									                                                            {return ' ';}
@@ -35,8 +36,6 @@
 "^" 								                                                            {return '^';}
 "(" 								                                                            {return '(';}
 ")" 								                                                            {return ')';}
-"[" 								                                                            {return '[';}
-"]" 								                                                            {return ']';}
 ">" 								                                                            {return '>';}
 "<" 								                                                            {return '<';}
 "NOT"								                                                            {return 'NOT';}
@@ -175,29 +174,22 @@ cell
 ;
 
 expseq
-  : '[' expseq ']' {
-      $$ = [$2];
-  }
-  | expseq ',' expseq {
-      //$1.push($3);
-      //$$ = $1;
-      $$.push($3);
-  }
-  | expseq ',' expression {
-        //$1.push($3);
-        //$$ = $1;
-        $$.push($3);
-    }
-;
-
-
-expseq
   : expression {
       if (ruleJS.helper.isArray($1)) {
         $$ = $1;
       } else {
         $$ = [$1];
       }
+    }
+  | ARRAY {
+      var result = [],
+          arr = eval("[" + yytext + "]");
+
+      arr.forEach(function (item) {
+        result.push(item);
+      });
+
+      $$ = result;
     }
 	| expseq ';' expression {
       $1.push($3);
