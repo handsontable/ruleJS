@@ -886,13 +886,15 @@ break;
 case 5:return 8;
 break;
 case 6:
-	                                                                                if (yy.obj.type == 'cell') return 26;
-                                                                                  return 32;
+	                                                                                //if (yy.obj.type == 'cell') return 26;
+                                                                                  //return 32;
+                                                                                  return 26
                                                                                 
 break;
 case 7:
-                                                                                  if (yy.obj.type == 'cell') return 28;
-                                                                                  return 32;
+                                                                                  //if (yy.obj.type == 'cell') return 28;
+                                                                                  //return 32;
+                                                                                  return 28;
                                                                                 
 break;
 case 8:return 23;

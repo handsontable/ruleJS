@@ -10,12 +10,14 @@
 ([0]?[1-9]|1[0-2])[:][0-5][0-9]([:][0-5][0-9])?[ ]?(AM|am|aM|Am|PM|pm|pM|Pm)		{return 'TIME_AMPM';}
 ([0]?[0-9]|1[0-9]|2[0-3])[:][0-5][0-9]([:][0-5][0-9])?        									{return 'TIME_24';}
 '$'[A-Za-z]+'$'[0-9]+                                                           {
-	                                                                                if (yy.obj.type == 'cell') return 'FIXEDCELL';
-                                                                                  return 'VARIABLE';
+	                                                                                //if (yy.obj.type == 'cell') return 'FIXEDCELL';
+                                                                                  //return 'VARIABLE';
+                                                                                  return 'FIXEDCELL'
                                                                                 }
 [A-Za-z]+[0-9]+                                                                 {
-                                                                                  if (yy.obj.type == 'cell') return 'CELL';
-                                                                                  return 'VARIABLE';
+                                                                                  //if (yy.obj.type == 'cell') return 'CELL';
+                                                                                  //return 'VARIABLE';
+                                                                                  return 'CELL';
                                                                                 }
 [A-Za-z]+(?=[(])    				                                                    {return 'FUNCTION';}
 [A-Za-z]{1,}[A-Za-z_0-9]+			                                                  {return 'VARIABLE';}

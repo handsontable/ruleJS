@@ -214,7 +214,7 @@ describe('parse()', function () {
     expect(parsed.result).toBe(-4);
   });
 
-  it('CHAR(65)', function () {
+  it('CHAR', function () {
     parsed = ruleJS.parse("CHAR(65)");
     expect(parsed.result).toBe("A");
   });
@@ -492,6 +492,11 @@ describe('parse()', function () {
     expect(parsed.result).toBe(0.86466);
   });
 
+  it('FALSE', function () {
+    parsed = ruleJS.parse("FALSE()");
+    expect(parsed.result).toBe(false);
+  });
+
   it('FDIST', function () {
     parsed = ruleJS.parse("ROUND(FDIST(15.2069, 6, 4, false),5)");
     expect(parsed.result).toBe(0.00122);
@@ -510,5 +515,198 @@ describe('parse()', function () {
   it('FISHERINV', function () {
     parsed = ruleJS.parse("FISHERINV(0.9729550745276566)");
     expect(parsed.result).toBe(0.75);
+  });
+
+  it('INT', function () {
+    parsed = ruleJS.parse("INT(-8.9)");
+    expect(parsed.result).toBe(-9);
+  });
+
+  it('ISEVEN', function () {
+    parsed = ruleJS.parse("ISEVEN(-2.5)");
+    expect(parsed.result).toBe(true);
+  });
+
+  it('ISODD', function () {
+    parsed = ruleJS.parse("ISODD(-2.5)");
+    expect(parsed.result).toBe(false);
+  });
+
+  it('LN', function () {
+    parsed = ruleJS.parse("ROUND(LN(86),5)");
+    expect(parsed.result).toBe(4.45435);
+  });
+
+  it('LOG', function () {
+    parsed = ruleJS.parse("LOG(8, 2)");
+    expect(parsed.result).toBe(3);
+  });
+
+  it('LOG10', function () {
+    parsed = ruleJS.parse("LOG10(100000)");
+    expect(parsed.result).toBe(5);
+  });
+
+  it('MAX', function () {
+    parsed = ruleJS.parse("MAX([0.1,0.2], [0.4,0.8], [true, false])");
+    expect(parsed.result).toBe(0.8);
+  });
+
+  it('MAXA', function () {
+    parsed = ruleJS.parse("MAXA([0.1,0.2], [0.4,0.8], [true, false])");
+    expect(parsed.result).toBe(1);
+  });
+
+  it('MEDIAN', function () {
+    parsed = ruleJS.parse("MEDIAN([1,2,3], [4,5,6])");
+    expect(parsed.result).toBe(3.5);
+  });
+
+  it('MIN', function () {
+    parsed = ruleJS.parse("MIN([0.1,0.2], [0.4,0.8], [true, false])");
+    expect(parsed.result).toBe(0.1);
+  });
+
+  it('MINA', function () {
+    parsed = ruleJS.parse("MINA([0.1,0.2], [0.4,0.8], [true, false])");
+    expect(parsed.result).toBe(0);
+  });
+
+  it('MOD', function () {
+    parsed = ruleJS.parse("MOD(3, -2)");
+    expect(parsed.result).toBe(-1);
+  });
+
+  it('NOT', function () {
+    parsed = ruleJS.parse("NOT(FALSE())");
+    expect(parsed.result).toBe(true);
+  });
+
+  it('ODD', function () {
+    parsed = ruleJS.parse("ODD(-1.5)");
+    expect(parsed.result).toBe(-3);
+  });
+
+  it('OR', function () {
+    parsed = ruleJS.parse('OR(true, false, true)');
+    expect(parsed.result).toBe(true);
+  });
+
+  it('PI', function () {
+    parsed = ruleJS.parse("ROUND(PI(),5)");
+    expect(parsed.result).toBe(3.14159);
+  });
+
+  it('POWER', function () {
+    parsed = ruleJS.parse("POWER(5, 2)");
+    expect(parsed.result).toBe(25);
+  });
+
+  it('ROUND', function () {
+    parsed = ruleJS.parse("ROUND(626.3, 2)");
+    expect(parsed.result).toBe(626.3);
+
+    parsed = ruleJS.parse("ROUND(626.3, -2)");
+    expect(parsed.result).toBe(600);
+  });
+
+  it('ROUNDOWN', function () {
+    parsed = ruleJS.parse("ROUNDDOWN(-3.14159, 2)");
+    expect(parsed.result).toBe(-3.14);
+  });
+
+  it('ROUNDUP', function () {
+    parsed = ruleJS.parse("ROUNDUP(-3.14159, 2)");
+    expect(parsed.result).toBe(-3.15);
+  });
+
+  it('SIN', function () {
+    parsed = ruleJS.parse("ROUND(SIN(1),5)");
+    expect(parsed.result).toBe(0.84147);
+  });
+
+  it('SINH', function () {
+    parsed = ruleJS.parse("ROUND(SINH(1),5)");
+    expect(parsed.result).toBe(1.1752);
+  });
+
+  it('SPLIT', function () {
+    parsed = ruleJS.parse("SPLIT('A,B,C', ',')");
+    expect(parsed.result.join()).toBe('A,B,C');
+  });
+
+  it('SQRT', function () {
+    parsed = ruleJS.parse("SQRT(16)");
+    expect(parsed.result).toBe(4);
+  });
+
+  it('SQRTPI', function () {
+    parsed = ruleJS.parse("ROUND(SQRTPI(2),5)");
+    expect(parsed.result).toBe(2.50663);
+  });
+
+  it('SUM', function () {
+    parsed = ruleJS.parse("SUM(-5, 15, 32, 'Hello World!')");
+    expect(parsed.result).toBe(42);
+  });
+
+  it('SUMIF', function () {
+    parsed = ruleJS.parse("SUMIF([2,4,8,16], '>5')");
+    expect(parsed.result).toBe(24);
+  });
+
+  it('SUMIFS', function () {
+    parsed = ruleJS.parse("SUMIFS([2,4,8,16], [1,2,3,4], '>=2', [1,2,4,8], '<=4')");
+    expect(parsed.result).toBe(12);
+  });
+
+  it('SUMPRODUCT', function () {
+    parsed = ruleJS.parse("SUMPRODUCT([[1,2],[3,4]], [[1,0],[0,1]])");
+    expect(parsed.result).toBe(5);
+  });
+
+  it('SUMSQ', function () {
+    parsed = ruleJS.parse("SUMSQ(3, 4)");
+    expect(parsed.result).toBe(25);
+  });
+
+  it('SUMX2MY2', function () {
+    parsed = ruleJS.parse("SUMX2MY2([1,2], [3,4])");
+    expect(parsed.result).toBe(-20);
+  });
+
+  it('SUMX2PY2', function () {
+    parsed = ruleJS.parse("SUMX2PY2([1,2], [3,4])");
+    expect(parsed.result).toBe(30);
+  });
+
+  it('SUMXMY2', function () {
+    parsed = ruleJS.parse("SUMXMY2([1,2], [3,4])");
+    expect(parsed.result).toBe(8);
+  });
+
+  it('TAN', function () {
+    parsed = ruleJS.parse("ROUND(TAN(1),5)");
+    expect(parsed.result).toBe(1.55741);
+  });
+
+  it('TANH', function () {
+    parsed = ruleJS.parse("ROUND(TANH(-2),5)");
+    expect(parsed.result).toBe(-0.96403);
+  });
+
+  it('TRUNCATE', function () {
+    parsed = ruleJS.parse("TRUNC(-8.9)");
+    expect(parsed.result).toBe(-8);
+  });
+
+  it('TRUE', function () {
+    parsed = ruleJS.parse("TRUE()");
+    expect(parsed.result).toBe(true);
+  });
+
+  it('XOR', function () {
+    parsed = ruleJS.parse("XOR(true, false, true)");
+    expect(parsed.result).toBe(false);
   });
 });

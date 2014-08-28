@@ -1,7 +1,6 @@
 /*
 * TODO:
 * 1) error handling
-* 2) tests
 * */
 
  var ruleJS = (function () {
@@ -31,6 +30,24 @@
    * @type {{number: number, numberInverted: numberInverted, mathMatch: mathMatch, callFunction: callFunction}}
    */
   var helper = {
+    SUPPORTED_FORMULAS: [
+      'ABS','ACCRINT', 'ACOS', 'ACOSH', 'ACOTH', 'AND', 'ARABIC', 'ASIN', 'ASINH', 'ATAN', 'ATAN2', 'ATANH', 'AVEDEV', 'AVERAGE', 'AVERAGEA', 'AVERAGEIF',
+      'BASE', 'BESSELI', 'BESSELJ', 'BESSELK', 'BESSELY', 'BETADIST', 'BETAINV', 'BIN2DEC', 'BIN2HEX', 'BIN2OCT', 'BINOMDIST', 'BINOMDISTRANGE', 'BINOMINV', 'BITAND', 'BITLSHIFT', 'BITOR', 'BITRSHIFT', 'BITXOR',
+      'CEILING', 'CEILINGMATH', 'CEILINGPRECISE', 'CHAR', 'CHISQDIST', 'CHISQINV', 'CODE', 'COMBIN', 'COMBINA', 'COMPLEX', 'CONCATENATE', 'CONFIDENCENORM','CONFIDENCET', 'CONVERT', 'CORREL', 'COS', 'COSH', 'COT', 'COTH', 'COUNT', 'COUNTA', 'COUNTBLANK', 'COUNTIF', 'COUNTIFS', 'COUNTIN', 'COUNTUNIQUE', 'COVARIANCEP', 'COVARIANCES','CSC', 'CSCH', 'CUMIPMT', 'CUMPRINC',
+      'DATE', 'DATEVALUE', 'DAY', 'DAYS', 'DAYS360', 'DB', 'DDB', 'DEC2BIN', 'DEC2HEX', 'DEC2OCT', 'DECIMAL', 'DEGREES', 'DELTA', 'DEVSQ', 'DOLLAR', 'DOLLARDE', 'DOLLARFR',
+      'E', 'EDATE', 'EFFECT', 'EOMONTH', 'ERF', 'ERFC', 'EVEN', 'EXACT', 'EXPONDIST',
+      'FALSE', 'FDIST', 'FINV', 'FISHER','FISHERINV',
+      'IF', 'INT', 'ISEVEN', 'ISODD',
+      'LN', 'LOG', 'LOG10',
+      'MAX', 'MAXA', 'MEDIAN', 'MIN', 'MINA', 'MOD',
+      'NOT',
+      'ODD', 'OR',
+      'PI', 'POWER',
+      'ROUND', 'ROUNDDOWN', 'ROUNDUP',
+      'SIN', 'SINH', 'SPLIT', 'SQRT', 'SQRTPI', 'SUM', 'SUMIF', 'SUMIFS', 'SUMPRODUCT', 'SUMSQ', 'SUMX2MY2', 'SUMX2PY2', 'SUMXMY2',
+      'TAN', 'TANH', 'TRUE', 'TRUNC',
+      'XOR'
+    ],
     /**
      * check if value is array
      * @param value
@@ -50,7 +67,7 @@
           return num;
         case 'string':
           if (!isNaN(num)) {
-            return parseInt(num, 10);
+            return num.indexOf('.') > -1 ? parseFloat(num) : parseInt(num, 10);
           }
       }
       return num;
@@ -112,9 +129,13 @@
       fn = fn.toUpperCase();
       args = args || [];
 
-      if (formulas[fn]) {
-        return formulas[fn].apply(this, args);
+      if (ruleJS.helper.SUPPORTED_FORMULAS.indexOf(fn) > -1) {
+        if (formulas[fn]) {
+          return formulas[fn].apply(this, args);
+        }
       }
+
+      return false;
     },
 
     /**
@@ -142,7 +163,10 @@
      * @returns {*}
      */
     cellValue: function (id) {
+      var cell = document.getElementById(id),
+          value = ruleJS.helper.number(cell.value);
 
+      return value;
     },
 
     /**
@@ -152,7 +176,7 @@
      * @returns {Array}
      */
     cellRangeValue: function (start, end) {
-
+      debugger;
     },
 
     /**
@@ -161,7 +185,7 @@
      * @returns {*}
      */
     fixedCellValue: function (id) {
-
+      debugger;
     },
 
     /**
@@ -171,7 +195,7 @@
      * @returns {Array}
      */
     fixedCellRangeValue: function (start, end) {
-
+      debugger;
     }
   };
 
