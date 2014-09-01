@@ -71,21 +71,23 @@
             <td>H</td>
             <td>I</td>
             <td>J</td>
+            <td>fn</td>
           </tr>
           </thead>
           <tbody>
           <tr>
             <td>1</td>
-            <td><input type="text" id="A1"></td>
-            <td><input type="text" id="B1"></td>
-            <td><input type="text" id="C1"></td>
-            <td><input type="text" id="D1"></td>
-            <td><input type="text" id="E1"></td>
-            <td><input type="text" id="F1"></td>
-            <td><input type="text" id="G1"></td>
-            <td><input type="text" id="H1"></td>
-            <td><input type="text" id="I1"></td>
-            <td><input type="text" id="J1"></td>
+            <td><input type="text" id="A1" value="1"></td>
+            <td><input type="text" id="B1" value="2"></td>
+            <td><input type="text" id="C1" value="3"></td>
+            <td><input type="text" id="D1" value="4"></td>
+            <td><input type="text" id="E1" value="5"></td>
+            <td><input type="text" id="F1" value="6"></td>
+            <td><input type="text" id="G1" value="7"></td>
+            <td><input type="text" id="H1" value="8"></td>
+            <td><input type="text" id="I1" value="9"></td>
+            <td><input type="text" id="J1" value="10"></td>
+            <td>SUM(A1:J1):<span data-formula="SUM(A1:J1)"></span></td>
           </tr>
           <tr>
             <td>2</td>
@@ -99,6 +101,7 @@
             <td><input type="text" id="H2"></td>
             <td><input type="text" id="I2"></td>
             <td><input type="text" id="J2"></td>
+            <td>MAX(A1:J1):<span data-formula="MAX(A1:J1)"></span></td>
           </tr>
           <tr>
             <td>3</td>
@@ -112,6 +115,7 @@
             <td><input type="text" id="H3"></td>
             <td><input type="text" id="I3"></td>
             <td><input type="text" id="J3"></td>
+            <td>MIN(A1:J1):<span data-formula="MIN(A1:J1)"></span></td>
           </tr>
           <tr>
             <td>4</td>
@@ -125,6 +129,7 @@
             <td><input type="text" id="H4"></td>
             <td><input type="text" id="I4"></td>
             <td><input type="text" id="J4"></td>
+            <td>AVERAGE(A1:J1):<span data-formula="AVERAGE(A1:J1)"></span></td>
           </tr>
           <tr>
             <td>5</td>
@@ -138,6 +143,7 @@
             <td><input type="text" id="H5"></td>
             <td><input type="text" id="I5"></td>
             <td><input type="text" id="J5"></td>
+            <td>SUMIF(A1:J1, '>5'):<span data-formula="SUMIF(A1:J1, '>5')"></span></td>
           </tr>
           <tr>
             <td>6</td>
@@ -151,6 +157,7 @@
             <td><input type="text" id="H6"></td>
             <td><input type="text" id="I6"></td>
             <td><input type="text" id="J6"></td>
+            <td></td>
           </tr>
           <tr>
             <td>7</td>
@@ -164,6 +171,7 @@
             <td><input type="text" id="H7"></td>
             <td><input type="text" id="I7"></td>
             <td><input type="text" id="J7"></td>
+            <td></td>
           </tr>
           <tr>
             <td>8</td>
@@ -177,6 +185,7 @@
             <td><input type="text" id="H8"></td>
             <td><input type="text" id="I8"></td>
             <td><input type="text" id="J8"></td>
+            <td></td>
           </tr>
           <tr>
             <td>9</td>
@@ -190,6 +199,7 @@
             <td><input type="text" id="H9"></td>
             <td><input type="text" id="I9"></td>
             <td><input type="text" id="J9"></td>
+            <td></td>
           </tr>
           <tr>
             <td>10</td>
@@ -203,6 +213,7 @@
             <td><input type="text" id="H10"></td>
             <td><input type="text" id="I10"></td>
             <td><input type="text" id="J10"></td>
+            <td></td>
           </tr>
           </tbody>
         </table>
@@ -215,7 +226,7 @@
 <script>
   (function () {
 
-    var rules = new ruleJS();
+    var rules = new ruleJS('demo1');
     rules.init();
 
     var button = document.querySelector('button'),
