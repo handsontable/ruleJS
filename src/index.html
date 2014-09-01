@@ -50,162 +50,163 @@
     <p>Try to parse the formula by typing ex. <code>AND(1,0)</code> into input below and press <kbd>Enter</kbd> or <kbd>Parse</kbd> button.</p>
 
     <div class="col-xs-6" style="padding: 0px;">
-      <form action="#" onsubmit="return false;">
+      <form action="#" onsubmit="return false;" id="demo1">
         <input type="text" placeholder="ex. AND(1,0)"><button>Parse</button>
 
-        <p style="display: none">result: <span id="result"></span></p>
-        <p style="display: none">error: <span id="error"></span></p>
+        <p class="bg-info" style="display: none">result: <span id="result"></span></p>
+        <p class="bg-danger" style="display: none">error: <span id="error"></span></p>
+
+        <br>
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <td></td>
+            <td>A</td>
+            <td>B</td>
+            <td>C</td>
+            <td>D</td>
+            <td>E</td>
+            <td>F</td>
+            <td>G</td>
+            <td>H</td>
+            <td>I</td>
+            <td>J</td>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td>1</td>
+            <td><input type="text" id="A1"></td>
+            <td><input type="text" id="B1"></td>
+            <td><input type="text" id="C1"></td>
+            <td><input type="text" id="D1"></td>
+            <td><input type="text" id="E1"></td>
+            <td><input type="text" id="F1"></td>
+            <td><input type="text" id="G1"></td>
+            <td><input type="text" id="H1"></td>
+            <td><input type="text" id="I1"></td>
+            <td><input type="text" id="J1"></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><input type="text" id="A2"></td>
+            <td><input type="text" id="B2"></td>
+            <td><input type="text" id="C2"></td>
+            <td><input type="text" id="D2"></td>
+            <td><input type="text" id="E2"></td>
+            <td><input type="text" id="F2"></td>
+            <td><input type="text" id="G2"></td>
+            <td><input type="text" id="H2"></td>
+            <td><input type="text" id="I2"></td>
+            <td><input type="text" id="J2"></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><input type="text" id="A3"></td>
+            <td><input type="text" id="B3"></td>
+            <td><input type="text" id="C3"></td>
+            <td><input type="text" id="D3"></td>
+            <td><input type="text" id="E3"></td>
+            <td><input type="text" id="F3"></td>
+            <td><input type="text" id="G3"></td>
+            <td><input type="text" id="H3"></td>
+            <td><input type="text" id="I3"></td>
+            <td><input type="text" id="J3"></td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td><input type="text" id="A4"></td>
+            <td><input type="text" id="B4"></td>
+            <td><input type="text" id="C4"></td>
+            <td><input type="text" id="D4"></td>
+            <td><input type="text" id="E4"></td>
+            <td><input type="text" id="F4"></td>
+            <td><input type="text" id="G4"></td>
+            <td><input type="text" id="H4"></td>
+            <td><input type="text" id="I4"></td>
+            <td><input type="text" id="J4"></td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td><input type="text" id="A5"></td>
+            <td><input type="text" id="B5"></td>
+            <td><input type="text" id="C5"></td>
+            <td><input type="text" id="D5"></td>
+            <td><input type="text" id="E5"></td>
+            <td><input type="text" id="F5"></td>
+            <td><input type="text" id="G5"></td>
+            <td><input type="text" id="H5"></td>
+            <td><input type="text" id="I5"></td>
+            <td><input type="text" id="J5"></td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td><input type="text" id="A6"></td>
+            <td><input type="text" id="B6"></td>
+            <td><input type="text" id="C6"></td>
+            <td><input type="text" id="D6"></td>
+            <td><input type="text" id="E6"></td>
+            <td><input type="text" id="F6"></td>
+            <td><input type="text" id="G6"></td>
+            <td><input type="text" id="H6"></td>
+            <td><input type="text" id="I6"></td>
+            <td><input type="text" id="J6"></td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td><input type="text" id="A7"></td>
+            <td><input type="text" id="B7"></td>
+            <td><input type="text" id="C7"></td>
+            <td><input type="text" id="D7"></td>
+            <td><input type="text" id="E7"></td>
+            <td><input type="text" id="F7"></td>
+            <td><input type="text" id="G7"></td>
+            <td><input type="text" id="H7"></td>
+            <td><input type="text" id="I7"></td>
+            <td><input type="text" id="J7"></td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td><input type="text" id="A8"></td>
+            <td><input type="text" id="B8"></td>
+            <td><input type="text" id="C8"></td>
+            <td><input type="text" id="D8"></td>
+            <td><input type="text" id="E8"></td>
+            <td><input type="text" id="F8"></td>
+            <td><input type="text" id="G8"></td>
+            <td><input type="text" id="H8"></td>
+            <td><input type="text" id="I8"></td>
+            <td><input type="text" id="J8"></td>
+          </tr>
+          <tr>
+            <td>9</td>
+            <td><input type="text" id="A9"></td>
+            <td><input type="text" id="B9"></td>
+            <td><input type="text" id="C9"></td>
+            <td><input type="text" id="D9"></td>
+            <td><input type="text" id="E9"></td>
+            <td><input type="text" id="F9"></td>
+            <td><input type="text" id="G9"></td>
+            <td><input type="text" id="H9"></td>
+            <td><input type="text" id="I9"></td>
+            <td><input type="text" id="J9"></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td><input type="text" id="A10"></td>
+            <td><input type="text" id="B10"></td>
+            <td><input type="text" id="C10"></td>
+            <td><input type="text" id="D10"></td>
+            <td><input type="text" id="E10"></td>
+            <td><input type="text" id="F10"></td>
+            <td><input type="text" id="G10"></td>
+            <td><input type="text" id="H10"></td>
+            <td><input type="text" id="I10"></td>
+            <td><input type="text" id="J10"></td>
+          </tr>
+          </tbody>
+        </table>
       </form>
-      <br>
-      <table class="table table-bordered">
-        <thead>
-        <tr>
-          <td></td>
-          <td>A</td>
-          <td>B</td>
-          <td>C</td>
-          <td>D</td>
-          <td>E</td>
-          <td>F</td>
-          <td>G</td>
-          <td>H</td>
-          <td>I</td>
-          <td>J</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-          <td>1</td>
-          <td><input type="text" id="A1"></td>
-          <td><input type="text" id="B1"></td>
-          <td><input type="text" id="C1"></td>
-          <td><input type="text" id="D1"></td>
-          <td><input type="text" id="E1"></td>
-          <td><input type="text" id="F1"></td>
-          <td><input type="text" id="G1"></td>
-          <td><input type="text" id="H1"></td>
-          <td><input type="text" id="I1"></td>
-          <td><input type="text" id="J1"></td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td><input type="text" id="A2"></td>
-          <td><input type="text" id="B2"></td>
-          <td><input type="text" id="C2"></td>
-          <td><input type="text" id="D2"></td>
-          <td><input type="text" id="E2"></td>
-          <td><input type="text" id="F2"></td>
-          <td><input type="text" id="G2"></td>
-          <td><input type="text" id="H2"></td>
-          <td><input type="text" id="I2"></td>
-          <td><input type="text" id="J2"></td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td><input type="text" id="A3"></td>
-          <td><input type="text" id="B3"></td>
-          <td><input type="text" id="C3"></td>
-          <td><input type="text" id="D3"></td>
-          <td><input type="text" id="E3"></td>
-          <td><input type="text" id="F3"></td>
-          <td><input type="text" id="G3"></td>
-          <td><input type="text" id="H3"></td>
-          <td><input type="text" id="I3"></td>
-          <td><input type="text" id="J3"></td>
-        </tr>
-        <tr>
-          <td>4</td>
-          <td><input type="text" id="A4"></td>
-          <td><input type="text" id="B4"></td>
-          <td><input type="text" id="C4"></td>
-          <td><input type="text" id="D4"></td>
-          <td><input type="text" id="E4"></td>
-          <td><input type="text" id="F4"></td>
-          <td><input type="text" id="G4"></td>
-          <td><input type="text" id="H4"></td>
-          <td><input type="text" id="I4"></td>
-          <td><input type="text" id="J4"></td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td><input type="text" id="A5"></td>
-          <td><input type="text" id="B5"></td>
-          <td><input type="text" id="C5"></td>
-          <td><input type="text" id="D5"></td>
-          <td><input type="text" id="E5"></td>
-          <td><input type="text" id="F5"></td>
-          <td><input type="text" id="G5"></td>
-          <td><input type="text" id="H5"></td>
-          <td><input type="text" id="I5"></td>
-          <td><input type="text" id="J5"></td>
-        </tr>
-        <tr>
-          <td>6</td>
-          <td><input type="text" id="A6"></td>
-          <td><input type="text" id="B6"></td>
-          <td><input type="text" id="C6"></td>
-          <td><input type="text" id="D6"></td>
-          <td><input type="text" id="E6"></td>
-          <td><input type="text" id="F6"></td>
-          <td><input type="text" id="G6"></td>
-          <td><input type="text" id="H6"></td>
-          <td><input type="text" id="I6"></td>
-          <td><input type="text" id="J6"></td>
-        </tr>
-        <tr>
-          <td>7</td>
-          <td><input type="text" id="A7"></td>
-          <td><input type="text" id="B7"></td>
-          <td><input type="text" id="C7"></td>
-          <td><input type="text" id="D7"></td>
-          <td><input type="text" id="E7"></td>
-          <td><input type="text" id="F7"></td>
-          <td><input type="text" id="G7"></td>
-          <td><input type="text" id="H7"></td>
-          <td><input type="text" id="I7"></td>
-          <td><input type="text" id="J7"></td>
-        </tr>
-        <tr>
-          <td>8</td>
-          <td><input type="text" id="A8"></td>
-          <td><input type="text" id="B8"></td>
-          <td><input type="text" id="C8"></td>
-          <td><input type="text" id="D8"></td>
-          <td><input type="text" id="E8"></td>
-          <td><input type="text" id="F8"></td>
-          <td><input type="text" id="G8"></td>
-          <td><input type="text" id="H8"></td>
-          <td><input type="text" id="I8"></td>
-          <td><input type="text" id="J8"></td>
-        </tr>
-        <tr>
-          <td>9</td>
-          <td><input type="text" id="A9"></td>
-          <td><input type="text" id="B9"></td>
-          <td><input type="text" id="C9"></td>
-          <td><input type="text" id="D9"></td>
-          <td><input type="text" id="E9"></td>
-          <td><input type="text" id="F9"></td>
-          <td><input type="text" id="G9"></td>
-          <td><input type="text" id="H9"></td>
-          <td><input type="text" id="I9"></td>
-          <td><input type="text" id="J9"></td>
-        </tr>
-        <tr>
-          <td>10</td>
-          <td><input type="text" id="A10"></td>
-          <td><input type="text" id="B10"></td>
-          <td><input type="text" id="C10"></td>
-          <td><input type="text" id="D10"></td>
-          <td><input type="text" id="E10"></td>
-          <td><input type="text" id="F10"></td>
-          <td><input type="text" id="G10"></td>
-          <td><input type="text" id="H10"></td>
-          <td><input type="text" id="I10"></td>
-          <td><input type="text" id="J10"></td>
-        </tr>
-        </tbody>
-      </table>
     </div>
 
   </section>
@@ -213,6 +214,9 @@
 
 <script>
   (function () {
+
+    var rules = new ruleJS();
+    rules.init();
 
     var button = document.querySelector('button'),
         input = document.querySelector('input[type=text]'),
@@ -223,7 +227,7 @@
       result.parentNode.style.display = 'none';
       error.parentNode.style.display = 'none';
 
-      var parsed = ruleJS.parse(input.value);
+      var parsed = rules.parse(input.value);
 
       if (parsed.result !== null) {
         result.parentNode.style.display = '';
@@ -243,16 +247,16 @@
       container.appendChild(ul);
 
       //var methods = [];
-      //for (var method in ruleJS.helper.SUPPORTED_FORMULAS) {
+      //for (var method in rules.helper.SUPPORTED_FORMULAS) {
       //  methods.push(method);
       //}
       //methods.sort();
 
-      var methods = ruleJS.helper.SUPPORTED_FORMULAS.sort();
+      var methods = rules.helper.SUPPORTED_FORMULAS.sort();
 
       methods.forEach(function (item) {
         var li = document.createElement('li'),
-          a = document.createElement('a');
+            a = document.createElement('a');
 
         a.href = 'http://www.stoic.com/pages/formula/function?function=' + item;
         a.target = '_blank';

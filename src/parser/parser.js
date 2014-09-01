@@ -90,7 +90,7 @@ case 1:
 break;
 case 2:
 
-        this.$ = ruleJS.helper.callVariable.call(this, $$[$0]);
+        this.$ = yy.ruleJS.helper.callVariable.call(this, $$[$0]);
       
 break;
 case 3:
@@ -105,7 +105,7 @@ case 4:
 break;
 case 5:
 
-        this.$ = ruleJS.helper.number($$[$0]);
+        this.$ = yy.ruleJS.helper.number($$[$0]);
       
 break;
 case 6:
@@ -125,12 +125,12 @@ case 8:
 break;
 case 9:
 
-        this.$ = ruleJS.helper.mathMatch('+', $$[$0-2], $$[$0]);
+        this.$ = yy.ruleJS.helper.mathMatch('+', $$[$0-2], $$[$0]);
       
 break;
 case 10:
 
-        this.$ = ruleJS.helper.number($$[$0-1]);
+        this.$ = yy.ruleJS.helper.number($$[$0-1]);
       
 break;
 case 11:
@@ -168,30 +168,30 @@ case 16:
 break;
 case 17:
 
-        this.$ = ruleJS.helper.mathMatch('-', $$[$0-2], $$[$0]);
+        this.$ = yy.ruleJS.helper.mathMatch('-', $$[$0-2], $$[$0]);
       
 break;
 case 18:
 
-        this.$ = ruleJS.helper.mathMatch('*', $$[$0-2], $$[$0]);
+        this.$ = yy.ruleJS.helper.mathMatch('*', $$[$0-2], $$[$0]);
       
 break;
 case 19:
 
-        this.$ = ruleJS.helper.mathMatch('/', $$[$0-2], $$[$0]);
+        this.$ = yy.ruleJS.helper.mathMatch('/', $$[$0-2], $$[$0]);
       
 break;
 case 20:
 
-        var n1 = ruleJS.helper.number($$[$0-2]),
-            n2 = ruleJS.helper.number($$[$0]);
+        var n1 = yy.ruleJS.helper.number($$[$0-2]),
+            n2 = yy.ruleJS.helper.number($$[$0]);
 
-        this.$ = ruleJS.helper.mathMatch('^', $$[$0-2], $$[$0]);
+        this.$ = yy.ruleJS.helper.mathMatch('^', $$[$0-2], $$[$0]);
       
 break;
 case 21:
 
-        var n1 = ruleJS.helper.numberInverted($$[$0]);
+        var n1 = yy.ruleJS.helper.numberInverted($$[$0]);
         this.$ = n1;
         if (isNaN(this.$)) {
             this.$ = 0;
@@ -200,7 +200,7 @@ case 21:
 break;
 case 22:
 
-        var n1 = ruleJS.helper.number($$[$0]);
+        var n1 = yy.ruleJS.helper.number($$[$0]);
         this.$ = n1;
         if (isNaN(this.$)) {
             this.$ = 0;
@@ -209,37 +209,37 @@ case 22:
 break;
 case 23:
 
-        this.$ = ruleJS.helper.callFunction.call(this, $$[$0-2], '');
+        this.$ = yy.ruleJS.helper.callFunction.call(this, $$[$0-2], '');
       
 break;
 case 24:
 
-        this.$ = ruleJS.helper.callFunction.call(this, $$[$0-3], $$[$0-1]);
+        this.$ = yy.ruleJS.helper.callFunction.call(this, $$[$0-3], $$[$0-1]);
       
 break;
 case 28:
 
-      this.$ = ruleJS.helper.fixedCellValue.call(yy.obj, $$[$0]);
+      this.$ = yy.ruleJS.helper.fixedCellValue.call(yy.obj, $$[$0]);
     
 break;
 case 29:
 
-      this.$ = ruleJS.helper.fixedCellRangeValue.call(yy.obj, $$[$0-2], $$[$0]);
+      this.$ = yy.ruleJS.helper.fixedCellRangeValue.call(yy.obj, $$[$0-2], $$[$0]);
     
 break;
 case 30:
 
-      this.$ = ruleJS.helper.cellValue.call(yy.obj, $$[$0]);
+      this.$ = yy.ruleJS.helper.cellValue.call(yy.obj, $$[$0]);
     
 break;
 case 31:
 
-      this.$ = ruleJS.helper.cellRangeValue.call(yy.obj, $$[$0-2], $$[$0]);
+      this.$ = yy.ruleJS.helper.cellRangeValue.call(yy.obj, $$[$0-2], $$[$0]);
     
 break;
 case 32:
 
-      if (ruleJS.helper.isArray($$[$0])) {
+      if (yy.ruleJS.utils.isArray($$[$0])) {
         this.$ = $$[$0];
       } else {
         this.$ = [$$[$0]];
@@ -271,7 +271,7 @@ case 36:
 break;
 case 37:
 
-      this.$ = (ruleJS.helper.isArray($$[$0-2]) ? $$[$0-2] : [$$[$0-2]]);
+      this.$ = (yy.ruleJS.utils.isArray($$[$0-2]) ? $$[$0-2] : [$$[$0-2]]);
       this.$.push($$[$0]);
     
 break;
