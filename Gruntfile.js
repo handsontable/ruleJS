@@ -15,13 +15,13 @@ module.exports = function (grunt) {
 
       pkg: grunt.file.readJSON('package.json'),
 
-      inject: {
-        single: {
-          files: {
-            'dist/index.html': 'src/index.html'
-          }
-        }
-      },
+//      inject: {
+//        single: {
+//          files: {
+//            'dist/index.html': 'src/index.html'
+//          }
+//        }
+//      },
 
       // GENERATED PARSER USING JISON LIBRARY
       jison: {
@@ -35,10 +35,10 @@ module.exports = function (grunt) {
       copy: {
         main: {
           files: [
-            {
-              src: 'src/index.html',
-              dest: 'dist/index.html'
-            },
+//            {
+//              src: 'src/index.html',
+//              dest: 'dist/index.html'
+//            },
             {
               src: 'lib/underscore.string/lib/underscore.string.js',
               dest: 'dist/lib/underscore.string/underscore.string.js'
@@ -163,7 +163,7 @@ module.exports = function (grunt) {
           options: {
             port: 8080,
             hostname: "0.0.0.0",
-            base: "dist",
+            base: "",
             keepalive: true
           }
         }
