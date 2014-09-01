@@ -55,8 +55,7 @@
 
         <p class="bg-info" style="display: none">result: <span id="result"></span></p>
         <p class="bg-danger" style="display: none">error: <span id="error"></span></p>
-
-        <br>
+        <p class="clearfix"></p>
         <table class="table table-bordered">
           <thead>
           <tr>
@@ -71,7 +70,7 @@
             <td>H</td>
             <td>I</td>
             <td>J</td>
-            <td>fn</td>
+            <td colspan="2" class="text-center">fn(x)</td>
           </tr>
           </thead>
           <tbody>
@@ -87,133 +86,68 @@
             <td><input type="text" id="H1" value="8"></td>
             <td><input type="text" id="I1" value="9"></td>
             <td><input type="text" id="J1" value="10"></td>
-            <td>SUM(A1:J1):<span data-formula="SUM(A1:J1)"></span></td>
+            <td>SUM(A1:J1)</td>
+            <td><span data-formula="SUM(A1:J1)"></span></td>
           </tr>
           <tr>
             <td>2</td>
-            <td><input type="text" id="A2"></td>
-            <td><input type="text" id="B2"></td>
-            <td><input type="text" id="C2"></td>
-            <td><input type="text" id="D2"></td>
-            <td><input type="text" id="E2"></td>
-            <td><input type="text" id="F2"></td>
-            <td><input type="text" id="G2"></td>
-            <td><input type="text" id="H2"></td>
-            <td><input type="text" id="I2"></td>
-            <td><input type="text" id="J2"></td>
-            <td>MAX(A1:J1):<span data-formula="MAX(A1:J1)"></span></td>
+            <td><input type="text" id="A2" value="-1"></td>
+            <td><input type="text" id="B2" value="-10"></td>
+            <td><input type="text" id="C2" value="2"></td>
+            <td><input type="text" id="D2" value="4"></td>
+            <td><input type="text" id="E2" value="100"></td>
+            <td><input type="text" id="F2" value="1"></td>
+            <td><input type="text" id="G2" value="50"></td>
+            <td><input type="text" id="H2" value="20"></td>
+            <td><input type="text" id="I2" value="200"></td>
+            <td><input type="text" id="J2" value="-100"></td>
+            <td>MAX(A2:J2)</td>
+            <td><span data-formula="MAX(A2:J2)"></span></td>
           </tr>
           <tr>
             <td>3</td>
-            <td><input type="text" id="A3"></td>
-            <td><input type="text" id="B3"></td>
-            <td><input type="text" id="C3"></td>
-            <td><input type="text" id="D3"></td>
-            <td><input type="text" id="E3"></td>
-            <td><input type="text" id="F3"></td>
-            <td><input type="text" id="G3"></td>
-            <td><input type="text" id="H3"></td>
-            <td><input type="text" id="I3"></td>
-            <td><input type="text" id="J3"></td>
-            <td>MIN(A1:J1):<span data-formula="MIN(A1:J1)"></span></td>
+            <td><input type="text" id="A3" value="-1"></td>
+            <td><input type="text" id="B3" value="-40"></td>
+            <td><input type="text" id="C3" value="-53"></td>
+            <td><input type="text" id="D3" value="1"></td>
+            <td><input type="text" id="E3" value="10"></td>
+            <td><input type="text" id="F3" value="30"></td>
+            <td><input type="text" id="G3" value="10"></td>
+            <td><input type="text" id="H3" value="301"></td>
+            <td><input type="text" id="I3" value="-1"></td>
+            <td><input type="text" id="J3" value="-20"></td>
+            <td>MIN(A3:J3)</td>
+            <td><span data-formula="MIN(A3:J3)"></span></td>
           </tr>
           <tr>
             <td>4</td>
-            <td><input type="text" id="A4"></td>
-            <td><input type="text" id="B4"></td>
-            <td><input type="text" id="C4"></td>
-            <td><input type="text" id="D4"></td>
-            <td><input type="text" id="E4"></td>
-            <td><input type="text" id="F4"></td>
-            <td><input type="text" id="G4"></td>
-            <td><input type="text" id="H4"></td>
-            <td><input type="text" id="I4"></td>
-            <td><input type="text" id="J4"></td>
-            <td>AVERAGE(A1:J1):<span data-formula="AVERAGE(A1:J1)"></span></td>
+            <td><input type="text" id="A4" value="20"></td>
+            <td><input type="text" id="B4" value="50"></td>
+            <td><input type="text" id="C4" value="100"></td>
+            <td><input type="text" id="D4" value="20"></td>
+            <td><input type="text" id="E4" value="1"></td>
+            <td><input type="text" id="F4" value="5"></td>
+            <td><input type="text" id="G4" value="15"></td>
+            <td><input type="text" id="H4" value="25"></td>
+            <td><input type="text" id="I4" value="45"></td>
+            <td><input type="text" id="J4" value="23"></td>
+            <td>AVERAGE(A4:J4):</td>
+            <td><span data-formula="AVERAGE(A4:J4)"></span></td>
           </tr>
           <tr>
             <td>5</td>
-            <td><input type="text" id="A5"></td>
-            <td><input type="text" id="B5"></td>
-            <td><input type="text" id="C5"></td>
-            <td><input type="text" id="D5"></td>
-            <td><input type="text" id="E5"></td>
-            <td><input type="text" id="F5"></td>
-            <td><input type="text" id="G5"></td>
-            <td><input type="text" id="H5"></td>
-            <td><input type="text" id="I5"></td>
-            <td><input type="text" id="J5"></td>
-            <td>SUMIF(A1:J1, '>5'):<span data-formula="SUMIF(A1:J1, '>5')"></span></td>
-          </tr>
-          <tr>
-            <td>6</td>
-            <td><input type="text" id="A6"></td>
-            <td><input type="text" id="B6"></td>
-            <td><input type="text" id="C6"></td>
-            <td><input type="text" id="D6"></td>
-            <td><input type="text" id="E6"></td>
-            <td><input type="text" id="F6"></td>
-            <td><input type="text" id="G6"></td>
-            <td><input type="text" id="H6"></td>
-            <td><input type="text" id="I6"></td>
-            <td><input type="text" id="J6"></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>7</td>
-            <td><input type="text" id="A7"></td>
-            <td><input type="text" id="B7"></td>
-            <td><input type="text" id="C7"></td>
-            <td><input type="text" id="D7"></td>
-            <td><input type="text" id="E7"></td>
-            <td><input type="text" id="F7"></td>
-            <td><input type="text" id="G7"></td>
-            <td><input type="text" id="H7"></td>
-            <td><input type="text" id="I7"></td>
-            <td><input type="text" id="J7"></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>8</td>
-            <td><input type="text" id="A8"></td>
-            <td><input type="text" id="B8"></td>
-            <td><input type="text" id="C8"></td>
-            <td><input type="text" id="D8"></td>
-            <td><input type="text" id="E8"></td>
-            <td><input type="text" id="F8"></td>
-            <td><input type="text" id="G8"></td>
-            <td><input type="text" id="H8"></td>
-            <td><input type="text" id="I8"></td>
-            <td><input type="text" id="J8"></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>9</td>
-            <td><input type="text" id="A9"></td>
-            <td><input type="text" id="B9"></td>
-            <td><input type="text" id="C9"></td>
-            <td><input type="text" id="D9"></td>
-            <td><input type="text" id="E9"></td>
-            <td><input type="text" id="F9"></td>
-            <td><input type="text" id="G9"></td>
-            <td><input type="text" id="H9"></td>
-            <td><input type="text" id="I9"></td>
-            <td><input type="text" id="J9"></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>10</td>
-            <td><input type="text" id="A10"></td>
-            <td><input type="text" id="B10"></td>
-            <td><input type="text" id="C10"></td>
-            <td><input type="text" id="D10"></td>
-            <td><input type="text" id="E10"></td>
-            <td><input type="text" id="F10"></td>
-            <td><input type="text" id="G10"></td>
-            <td><input type="text" id="H10"></td>
-            <td><input type="text" id="I10"></td>
-            <td><input type="text" id="J10"></td>
-            <td></td>
+            <td><input type="text" id="A5" value="0"></td>
+            <td><input type="text" id="B5" value="10"></td>
+            <td><input type="text" id="C5" value="1"></td>
+            <td><input type="text" id="D5" value="10"></td>
+            <td><input type="text" id="E5" value="2"></td>
+            <td><input type="text" id="F5" value="10"></td>
+            <td><input type="text" id="G5" value="3"></td>
+            <td><input type="text" id="H5" value="10"></td>
+            <td><input type="text" id="I5" value="4"></td>
+            <td><input type="text" id="J5" value="10"></td>
+            <td>SUMIF(A5:J5,'>5')</td>
+            <td><span data-formula="SUMIF(A5:J5,'>5')"></span></td>
           </tr>
           </tbody>
         </table>
