@@ -61,13 +61,14 @@ var ruleJS = (function (root) {
   var Matrix = (function () {
     /**
      * single item (cell) object
-     * @type {{id: string, formula: string, value: string, deps: Array}}
+     * @type {{id: string, formula: string, value: string, deps: Array, formulaEdit: boolean}}
      */
     var item = {
-        id: '',
-        formula: '',
-        value: '',
-        deps: []
+      id: '',
+      formula: '',
+      value: '',
+      deps: [],
+      formulaEdit: false
     };
 
     /**
@@ -82,60 +83,12 @@ var ruleJS = (function (root) {
      */
     var formElements = ['input[type=text]', '[data-formula]'];
 
-    /**
-     * register new found element to matrix
-     * @param element
-     */
-    var registerMatrix = function (element) {
-      var id = element.getAttribute('id'),
-          formula = element.getAttribute('data-formula');
-
-      if (formula) {
-
-        // add item with basic properties to data array
-        addItem({
-          id: id,
-          formula: formula
-        });
-
-        calculateElementFormula(formula, element);
+    var listen = function () {
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
       }
-    };
-
-    /**
-     * calculate element formula
-     * @param {String} formula
-     * @param {Element} element
-     * @returns {Object}
-     */
-    var calculateElementFormula = function (formula, element) {
-      // to avoid double translate formulas, update item data in parser
-      var parsed = parse(formula, element),
-          value = parsed.result,
-          nodeName = element.nodeName.toUpperCase();
-
-      updateItem(element, {value: value});
-
-      if (['INPUT'].indexOf(nodeName) === -1) {
-        element.innerText = value;
-      }
-
-      element.value = value;
-
-      return parsed;
-    };
-
-    /**
-     * add item to data
-     * @param {Object} item
-     */
-    var addItem = function (item) {
-      var cellInData = data.filter(function (cell) {
-        return cell.id === item.id
-      })[0];
-
-      if (!cellInData) {
-        data.push(item);
+      else if (!document.activeElement) { //IE
+        document.body.focus();
       }
     };
 
@@ -151,14 +104,21 @@ var ruleJS = (function (root) {
     };
 
     /**
-     * update item properties in data array
-     * @param {Element} element
+     * remove item from data array
+     * @param {String} id
+     */
+    var removeItem = function (id) {
+      data = data.filter(function(item) {
+        return item.id !== id;
+      });
+    };
+
+    /**
+     * update item properties
+     * @param {Object} item
      * @param {Object} props
      */
-    var updateItem = function (element, props) {
-      var id = element.getAttribute('id'),
-          item = getItem(id);
-
+    var updateItem = function (item, props) {
       if (item && props) {
         for (var p in props) {
           if (item[p] && instance.utils.isArray(item[p])) {
@@ -182,27 +142,137 @@ var ruleJS = (function (root) {
     };
 
     /**
-     * get dependencies by element
-     * @param {Element} element
-     * @returns {Array}
+     * add item to data array
+     * @param {Object} item
      */
-    var getDependenciesByElement = function (element) {
-      var id = element.getAttribute('id');
+    var addItem = function (item) {
+      var cellExist = data.filter(function (cell) {
+        return cell.id === item.id
+      })[0];
 
-      var filtered = data.filter(function (cell) {
-        if (cell.deps) {
-          return cell.deps.indexOf(id) > -1;
+      if (!cellExist) {
+        data.push(item);
+      } else {
+        updateItem(cellExist, item);
+      }
+    };
+
+    /**
+     * update element item properties in data array
+     * @param {Element} element
+     * @param {Object} props
+     */
+    var updateElementItem = function (element, props) {
+      var id = element.getAttribute('id'),
+          item = getItem(id);
+
+      updateItem(item, props);
+    };
+
+    /**
+     * recalculate refs cell
+     * @param {String} id
+     */
+    var recalculateDependencies = function (id) {
+
+      var allDependencies = [];
+
+      /**
+       * get dependencies by element
+       * @param {String} id
+       * @returns {Array}
+       */
+      var getDependencies = function (id) {
+        var filtered = data.filter(function (cell) {
+          if (cell.deps) {
+            return cell.deps.indexOf(id) > -1;
+          }
+        });
+
+        var deps = [];
+        filtered.forEach(function (cell) {
+          if (deps.indexOf(cell.id) === -1) {
+            deps.push(cell.id);
+          }
+        });
+
+        return deps;
+      };
+
+      /**
+       * get total dependencies
+       * @param {String} id
+       */
+      var getTotalDependencies = function (id) {
+        var deps = getDependencies(id);
+
+        if (deps.length) {
+          deps.forEach(function (refId) {
+            if (allDependencies.indexOf(refId) === -1) {
+              allDependencies.push(refId);
+
+              var item = getItem(refId);
+              if (item.deps.length) {
+                getTotalDependencies(refId);
+              }
+            }
+          });
+        }
+      };
+
+      getTotalDependencies(id);
+
+      allDependencies.forEach(function (refId) {
+        var item = getItem(refId);
+        if (item && item.formula) {
+          var refElement = document.getElementById(refId);
+          calculateElementFormula(item.formula, refElement);
         }
       });
+    };
 
-      var deps = [];
-      filtered.forEach(function (cell) {
-        if (deps.indexOf(cell.id) === -1) {
-          deps.push(cell.id);
-        }
-      });
+    /**
+     * calculate element formula
+     * @param {String} formula
+     * @param {Element} element
+     * @returns {Object}
+     */
+    var calculateElementFormula = function (formula, element) {
+      // to avoid double translate formulas, update item data in parser
+      var parsed = parse(formula, element),
+          value = parsed.result,
+          nodeName = element.nodeName.toUpperCase();
 
-      return deps;
+      updateElementItem(element, {value: value});
+
+      if (['INPUT'].indexOf(nodeName) === -1) {
+        element.innerText = value;
+      }
+
+      element.value = value;
+
+      return parsed;
+    };
+
+    /**
+     * register new found element to matrix
+     * @param {Element} element
+     * @returns {Object}
+     */
+    var registerInMatrix = function (element) {
+      var id = element.getAttribute('id'),
+          formula = element.getAttribute('data-formula');
+
+      if (formula) {
+
+        // add item with basic properties to data array
+        addItem({
+          id: id,
+          formula: formula
+        });
+
+        calculateElementFormula(formula, element);
+      }
     };
 
     /**
@@ -210,19 +280,58 @@ var ruleJS = (function (root) {
      * @param element
      */
     var registerEvents = function (element) {
+      var id = element.getAttribute('id');
 
-      //re-calculate formula if refs cell value changed
-      element.addEventListener('change', function () {
-        var deps = getDependenciesByElement(element);
-        deps.forEach(function (id) {
-          var item = getItem(id);
-          if (item.formula) {
-            var element = document.getElementById(id);
-            calculateElementFormula(item.formula, element);
-          }
-        });
+      // on db click show formula
+      element.addEventListener('dblclick', function () {
+        var item = getItem(id);
+
+        if (item && item.formula) {
+          item.formulaEdit = true;
+          element.value = '=' + item.formula;
+        }
       });
 
+      element.addEventListener('blur', function () {
+        var item = getItem(id);
+
+        if (item) {
+          if (item.formulaEdit) {
+            element.value = item.value;
+          }
+
+          item.formulaEdit = false;
+        }
+      });
+
+      // if pressed ESC restore original value
+      element.addEventListener('keyup', function (event) {
+        switch (event.keyCode) {
+          case 13: // ENTER
+          case 27: // ESC
+            // leave cell
+            listen();
+            break;
+        }
+      });
+
+      // re-calculate formula if ref cells value changed
+      element.addEventListener('change', function () {
+        // reset and remove item
+        removeItem(id);
+
+        // check if inserted text could be the formula
+        var value = element.value;
+
+        if (value[0] === '=') {
+          // TODO: handle #REF!
+          element.setAttribute('data-formula', value.substr(1));
+          registerInMatrix(element);
+        }
+
+        // get ref cells and re-calculate formulas
+        recalculateDependencies(id);
+      });
     };
 
     /**
@@ -233,7 +342,7 @@ var ruleJS = (function (root) {
 
       // iterate through elements contains specified attributes
       [].slice.call($totalElements).forEach(function ($item) {
-        registerMatrix($item);
+        registerInMatrix($item);
         registerEvents($item);
       });
     };
@@ -241,7 +350,7 @@ var ruleJS = (function (root) {
     return {
       data: data,
       scan: scan,
-      updateItem: updateItem
+      updateElementItem: updateElementItem
     }
   });
 
@@ -520,7 +629,7 @@ var ruleJS = (function (root) {
     cellValue: function (cell) {
       var value = document.getElementById(cell).value;
 
-      matrix.updateItem(this, {deps: [cell]});
+      matrix.updateElementItem(this, {deps: [cell]});
 
       return instance.helper.number(value);
     },
@@ -540,7 +649,7 @@ var ruleJS = (function (root) {
 
       result.push(cells.value);
 
-      matrix.updateItem(this, {deps: cells.index});
+      matrix.updateElementItem(this, {deps: cells.index});
 
       return result;
     },
