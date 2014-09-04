@@ -27,26 +27,46 @@ var ruleJS = (function (root) {
    * contains most of Microsoft Excel formula functions
    * @type {Window.Formula|*|{}}
    */
-  var formulas = Formula || {};
+  var formulas = {};
 
   /**
    * parser object delivered by jison library
    * @type {Parser|*|{}}
    */
-  var parser = Parser || {};
+  var parser = {};
+
+  var FormulaParser = function(handler) {
+    var formulaLexer = function () {};
+    formulaLexer.prototype = Parser.lexer;
+
+    var formulaParser = function () {
+      this.lexer = new formulaLexer();
+      this.yy = {};
+    };
+
+    formulaParser.prototype = Parser;
+    var newParser = new formulaParser;
+    newParser.setObj = function(obj) {
+      newParser.yy.obj = obj;
+    };
+
+    newParser.yy.handler = handler;
+
+    return newParser;
+  };
 
   /**
    * matrix collection for each form, contains cache of all form element
-   * @param key
    */
   var Matrix = (function () {
     /**
      * single item (cell) object
-     * @type {{value: number, formulas: null, deps: Array}}
+     * @type {{id: string, formula: string, value: string, deps: Array}}
      */
     var item = {
-        value: 0,
-        formulas: null,
+        id: '',
+        formula: '',
+        value: '',
         deps: []
     };
 
@@ -60,51 +80,170 @@ var ruleJS = (function (root) {
      * form elements, which can be parsed
      * @type {string[]}
      */
-    var formElements = ['input[type=text]'];
+    var formElements = ['input[type=text]', '[data-formula]'];
 
     /**
-     * formula attribute in DOM
-     * @type {string[]}
+     * register new found element to matrix
+     * @param element
      */
-    var formulasAttr = ['[data-formula]'];
+    var registerMatrix = function (element) {
+      var id = element.getAttribute('id'),
+          formula = element.getAttribute('data-formula');
+
+      if (formula) {
+
+        // add item with basic properties to data array
+        addItem({
+          id: id,
+          formula: formula
+        });
+
+        calculateElementFormula(formula, element);
+      }
+    };
+
+    /**
+     * calculate element formula
+     * @param {String} formula
+     * @param {Element} element
+     * @returns {Object}
+     */
+    var calculateElementFormula = function (formula, element) {
+      // to avoid double translate formulas, update item data in parser
+      var parsed = parse(formula, element),
+          value = parsed.result,
+          nodeName = element.nodeName.toUpperCase();
+
+      updateItem(element, {value: value});
+
+      if (['INPUT'].indexOf(nodeName) === -1) {
+        element.innerText = value;
+      }
+
+      element.value = value;
+
+      return parsed;
+    };
+
+    /**
+     * add item to data
+     * @param {Object} item
+     */
+    var addItem = function (item) {
+      var cellInData = data.filter(function (cell) {
+        return cell.id === item.id
+      })[0];
+
+      if (!cellInData) {
+        data.push(item);
+      }
+    };
+
+    /**
+     * get item from data array
+     * @param {String} id
+     * @returns {*}
+     */
+    var getItem = function (id) {
+      return data.filter(function(item) {
+        return item.id === id;
+      })[0];
+    };
+
+    /**
+     * update item properties in data array
+     * @param {Element} element
+     * @param {Object} props
+     */
+    var updateItem = function (element, props) {
+      var id = element.getAttribute('id'),
+          item = getItem(id);
+
+      if (item && props) {
+        for (var p in props) {
+          if (item[p] && instance.utils.isArray(item[p])) {
+            if (instance.utils.isArray(props[p])) {
+              props[p].forEach(function (i) {
+                if (item[p].indexOf(i) === -1) {
+                  item[p].push(i);
+                }
+              });
+            } else {
+
+              if (item[p].indexOf(props[p]) === -1) {
+                item[p].push(props[p]);
+              }
+            }
+          } else {
+            item[p] = props[p];
+          }
+        }
+      }
+    };
+
+    /**
+     * get dependencies by element
+     * @param {Element} element
+     * @returns {Array}
+     */
+    var getDependenciesByElement = function (element) {
+      var id = element.getAttribute('id');
+
+      var filtered = data.filter(function (cell) {
+        if (cell.deps) {
+          return cell.deps.indexOf(id) > -1;
+        }
+      });
+
+      var deps = [];
+      filtered.forEach(function (cell) {
+        if (deps.indexOf(cell.id) === -1) {
+          deps.push(cell.id);
+        }
+      });
+
+      return deps;
+    };
+
+    /**
+     * register events for elements
+     * @param element
+     */
+    var registerEvents = function (element) {
+
+      //re-calculate formula if refs cell value changed
+      element.addEventListener('change', function () {
+        var deps = getDependenciesByElement(element);
+        deps.forEach(function (id) {
+          var item = getItem(id);
+          if (item.formula) {
+            var element = document.getElementById(id);
+            calculateElementFormula(item.formula, element);
+          }
+        });
+      });
+
+    };
 
     /**
      * scan the form and build the calculation matrix
      */
     var scan = function () {
-      var $totalElements = rootElement.querySelectorAll(formElements),
-          $formulaElements = rootElement.querySelectorAll(formulasAttr);
+      var $totalElements = rootElement.querySelectorAll(formElements);
 
-      [].slice.call($formulaElements).forEach(function ($item) {
-        var formula = $item.getAttribute('data-formula'),
-            nodeName = $item.nodeName.toUpperCase(),
-            parsed = parse(formula);
-
-        if (['INPUT'].indexOf(nodeName) === -1) {
-          $item.innerText = parsed.result;
-        }
-
-        $item.value = parsed.result;
+      // iterate through elements contains specified attributes
+      [].slice.call($totalElements).forEach(function ($item) {
+        registerMatrix($item);
+        registerEvents($item);
       });
     };
 
-    var update = function () {
-
-    };
-
-    var calculate = function () {
-
-    };
-
-    var clean = function () {
-
-    };
-
     return {
-      scan: scan
+      data: data,
+      scan: scan,
+      updateItem: updateItem
     }
   });
-
 
   /**
    * utils methods
@@ -183,7 +322,7 @@ var ruleJS = (function (root) {
      * iterate cell range and get theirs indexes and values
      * @param {Object} startCell ex.: {row:1, col: 1}
      * @param {Object} endCell ex.: {row:10, col: 1}
-     * @param {Function} callback
+     * @param {Function=} callback
      * @returns {{index: Array, value: Array}}
      */
     iterateCells: function (startCell, endCell, callback) {
@@ -308,7 +447,6 @@ var ruleJS = (function (root) {
      */
     mathMatch: function (type, number1, number2) {
       var result;
-
       number1 = !isNaN(number1) ? parseInt(number1, 10) : 0;
       number2 = !isNaN(number2) ? parseInt(number2, 10) : 0;
 
@@ -381,6 +519,9 @@ var ruleJS = (function (root) {
      */
     cellValue: function (cell) {
       var value = document.getElementById(cell).value;
+
+      matrix.updateItem(this, {deps: [cell]});
+
       return instance.helper.number(value);
     },
 
@@ -394,10 +535,13 @@ var ruleJS = (function (root) {
       var coordsStart = instance.utils.cellCoords(start),
           coordsEnd = instance.utils.cellCoords(end);
 
-      var cells = utils.iterateCells(coordsStart, coordsEnd),
+      var cells = instance.utils.iterateCells(coordsStart, coordsEnd),
           result = [];
 
-      result.push(cells.value)
+      result.push(cells.value);
+
+      matrix.updateItem(this, {deps: cells.index});
+
       return result;
     },
 
@@ -423,15 +567,19 @@ var ruleJS = (function (root) {
 
   /**
    * parse input string using parser
-   * @param {String} input
    * @returns {Object} {{error: *, result: *}}
+   * @param formula
+   * @param element
    */
-  var parse = function (input) {
+  var parse = function (formula, element) {
     var result = null,
-      error = null;
+        error = null;
 
     try {
-      result = parser.parse(input);
+
+      parser.setObj(element);
+      result = parser.parse(formula);
+
       error = null;
     } catch (ex) {
       error = ex.message;
@@ -443,12 +591,19 @@ var ruleJS = (function (root) {
     }
   };
 
+  var matrix = null;
+
+  /**
+   * initial method, create formulas, parser and matrix objects
+   */
   var init = function () {
     instance = this;
-    Parser.yy.ruleJS = instance;
+
+    formulas = Formula;
+    parser = new FormulaParser(instance);
 
     if (rootElement) {
-      var matrix = new Matrix();
+      matrix = new Matrix();
       matrix.scan();
     }
   };
@@ -463,26 +618,3 @@ var ruleJS = (function (root) {
   };
 
 });
-
-/*
-if (typeof(window) !== 'undefined') {
-  window.FormulaParser = function(handler) {
-    var formulaLexer = function () {};
-    formulaLexer.prototype = parser.lexer;
-
-    var formulaParser = function () {
-      this.lexer = new formulaLexer();
-      this.yy = {};
-    };
-
-    formulaParser.prototype = parser;
-    var newParser = new formulaParser;
-    newParser.setObj = function(obj) {
-      newParser.yy.obj = obj;
-    };
-
-    newParser.yy.handler = handler;
-    return newParser;
-  };
-}
-*/
