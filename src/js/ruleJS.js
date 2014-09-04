@@ -104,6 +104,16 @@ var ruleJS = (function (root) {
     };
 
     /**
+     * remove item from data array
+     * @param {String} id
+     */
+    var removeItem = function (id) {
+      data = data.filter(function(item) {
+        return item.id !== id;
+      });
+    };
+
+    /**
      * update item properties
      * @param {Object} item
      * @param {Object} props
@@ -132,7 +142,7 @@ var ruleJS = (function (root) {
     };
 
     /**
-     * add item to data
+     * add item to data array
      * @param {Object} item
      */
     var addItem = function (item) {
@@ -158,12 +168,18 @@ var ruleJS = (function (root) {
 
       updateItem(item, props);
     };
-    // TODO: recursive
+
+    /**
+     * recalculate refs cell
+     * @param {String} id
+     */
     var recalculateDependencies = function (id) {
+
+      var allDependencies = [];
 
       /**
        * get dependencies by element
-       * @param {String} element
+       * @param {String} id
        * @returns {Array}
        */
       var getDependencies = function (id) {
@@ -183,10 +199,30 @@ var ruleJS = (function (root) {
         return deps;
       };
 
+      /**
+       * get total dependencies
+       * @param {String} id
+       */
+      var getTotalDependencies = function (id) {
+        var deps = getDependencies(id);
 
-      var deps = getDependencies(id);
+        if (deps.length) {
+          deps.forEach(function (refId) {
+            if (allDependencies.indexOf(refId) === -1) {
+              allDependencies.push(refId);
 
-      deps.forEach(function (refId) {
+              var item = getItem(refId);
+              if (item.deps.length) {
+                getTotalDependencies(refId);
+              }
+            }
+          });
+        }
+      };
+
+      getTotalDependencies(id);
+
+      allDependencies.forEach(function (refId) {
         var item = getItem(refId);
         if (item && item.formula) {
           var refElement = document.getElementById(refId);
@@ -225,7 +261,7 @@ var ruleJS = (function (root) {
      */
     var registerInMatrix = function (element) {
       var id = element.getAttribute('id'),
-        formula = element.getAttribute('data-formula');
+          formula = element.getAttribute('data-formula');
 
       if (formula) {
 
@@ -244,13 +280,12 @@ var ruleJS = (function (root) {
      * @param element
      */
     var registerEvents = function (element) {
-      // TODO: update previous value
-      var originalValue = element.value,
-          id = element.getAttribute('id');
+      var id = element.getAttribute('id');
 
+      // on db click show formula
       element.addEventListener('dblclick', function () {
         var item = getItem(id);
-        console.debug('element.value:', element.value);
+
         if (item && item.formula) {
           item.formulaEdit = true;
           element.value = '=' + item.formula;
@@ -259,9 +294,10 @@ var ruleJS = (function (root) {
 
       element.addEventListener('blur', function () {
         var item = getItem(id);
+
         if (item) {
           if (item.formulaEdit) {
-            element.value = originalValue;
+            element.value = item.value;
           }
 
           item.formulaEdit = false;
@@ -271,12 +307,9 @@ var ruleJS = (function (root) {
       // if pressed ESC restore original value
       element.addEventListener('keyup', function (event) {
         switch (event.keyCode) {
-          case 27: // ESC
-            element.value = originalValue;
-            listen();
-            break;
-
           case 13: // ENTER
+          case 27: // ESC
+            // leave cell
             listen();
             break;
         }
@@ -284,13 +317,16 @@ var ruleJS = (function (root) {
 
       // re-calculate formula if ref cells value changed
       element.addEventListener('change', function () {
+        // reset and remove item
+        removeItem(id);
+
         // check if inserted text could be the formula
         var value = element.value;
+
         if (value[0] === '=') {
           // TODO: handle #REF!
           element.setAttribute('data-formula', value.substr(1));
           registerInMatrix(element);
-          originalValue = element.value;
         }
 
         // get ref cells and re-calculate formulas
@@ -312,7 +348,6 @@ var ruleJS = (function (root) {
     };
 
     return {
-      data: data,
       scan: scan,
       updateElementItem: updateElementItem
     }
