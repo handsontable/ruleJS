@@ -73,7 +73,7 @@ expressions
 
 expression
     : variableSequence {
-        $$ = yy.ruleJS.helper.callVariable.call(this, $1);
+        $$ = yy.handler.helper.callVariable.call(this, $1);
       }
     | TIME_AMPM {
         $$ = yy.handler.time.call(yy.obj, $1, true);
@@ -82,7 +82,7 @@ expression
         $$ = yy.handler.time.call(yy.obj, $1);
       }
     | number {
-        $$ = yy.ruleJS.helper.number($1);
+        $$ = yy.handler.helper.number($1);
       }
     | STRING {
         $$ = $1.substring(1, $1.length - 1);
@@ -94,10 +94,10 @@ expression
         {$$ = $1 == $3}
       }
     | expression '+' expression {
-        $$ = yy.ruleJS.helper.mathMatch('+', $1, $3);
+        $$ = yy.handler.helper.mathMatch('+', $1, $3);
       }
     | '(' expression ')' {
-        $$ = yy.ruleJS.helper.number($2);
+        $$ = yy.handler.helper.number($2);
       }
     | expression '<' '=' expression {
         {$$ = $1 <= $4}
@@ -121,39 +121,39 @@ expression
         {$$ = $1 < $3}
       }
     | expression '-' expression {
-        $$ = yy.ruleJS.helper.mathMatch('-', $1, $3);
+        $$ = yy.handler.helper.mathMatch('-', $1, $3);
       }
     | expression '*' expression {
-        $$ = yy.ruleJS.helper.mathMatch('*', $1, $3);
+        $$ = yy.handler.helper.mathMatch('*', $1, $3);
       }
     | expression '/' expression {
-        $$ = yy.ruleJS.helper.mathMatch('/', $1, $3);
+        $$ = yy.handler.helper.mathMatch('/', $1, $3);
       }
     | expression '^' expression {
-        var n1 = yy.ruleJS.helper.number($1),
-            n2 = yy.ruleJS.helper.number($3);
+        var n1 = yy.handler.helper.number($1),
+            n2 = yy.handler.helper.number($3);
 
-        $$ = yy.ruleJS.helper.mathMatch('^', $1, $3);
+        $$ = yy.handler.helper.mathMatch('^', $1, $3);
       }
     | '-' expression {
-        var n1 = yy.ruleJS.helper.numberInverted($2);
+        var n1 = yy.handler.helper.numberInverted($2);
         $$ = n1;
         if (isNaN($$)) {
             $$ = 0;
         }
       }
     | '+' expression {
-        var n1 = yy.ruleJS.helper.number($2);
+        var n1 = yy.handler.helper.number($2);
         $$ = n1;
         if (isNaN($$)) {
             $$ = 0;
         }
       }
     | FUNCTION '(' ')' {
-        $$ = yy.ruleJS.helper.callFunction.call(this, $1, '');
+        $$ = yy.handler.helper.callFunction.call(this, $1, '');
       }
     | FUNCTION '(' expseq ')' {
-        $$ = yy.ruleJS.helper.callFunction.call(this, $1, $3);
+        $$ = yy.handler.helper.callFunction.call(this, $1, $3);
       }
     | cell
     | error
@@ -162,22 +162,22 @@ expression
 
 cell
    : FIXEDCELL {
-      $$ = yy.ruleJS.helper.fixedCellValue.call(yy.obj, $1);
+      $$ = yy.handler.helper.fixedCellValue.call(yy.obj, $1);
     }
   | FIXEDCELL ':' FIXEDCELL {
-      $$ = yy.ruleJS.helper.fixedCellRangeValue.call(yy.obj, $1, $3);
+      $$ = yy.handler.helper.fixedCellRangeValue.call(yy.obj, $1, $3);
     }
   | CELL {
-      $$ = yy.ruleJS.helper.cellValue.call(yy.obj, $1);
+      $$ = yy.handler.helper.cellValue.call(yy.obj, $1);
     }
   | CELL ':' CELL {
-      $$ = yy.ruleJS.helper.cellRangeValue.call(yy.obj, $1, $3);
+      $$ = yy.handler.helper.cellRangeValue.call(yy.obj, $1, $3);
     }
 ;
 
 expseq
   : expression {
-      if (yy.ruleJS.utils.isArray($1)) {
+      if (yy.handler.utils.isArray($1)) {
         $$ = $1;
       } else {
         $$ = [$1];
@@ -208,7 +208,7 @@ variableSequence
       $$ = [$1];
     }
 	| variableSequence DECIMAL VARIABLE {
-      $$ = (yy.ruleJS.utils.isArray($1) ? $1 : [$1]);
+      $$ = (yy.handler.utils.isArray($1) ? $1 : [$1]);
       $$.push($3);
     }
 ;
