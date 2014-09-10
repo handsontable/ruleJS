@@ -30,6 +30,99 @@ describe('parse()', function () {
     parsed = null;
   });
 
+  describe('logical', function () {
+    it('operator: =', function () {
+      parsed = rules.parse('10=10');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('10=-10');
+      expect(parsed.result).toBe(false);
+    });
+
+    it('operator: >', function () {
+      parsed = rules.parse('10>1');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('-1>-2');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('-2>-1');
+      expect(parsed.result).toBe(false);
+    });
+
+    it('operator: <', function () {
+      parsed = rules.parse('1<10');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('-2<-1');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('-1<-2');
+      expect(parsed.result).toBe(false);
+    });
+
+    it('operator: >=', function () {
+      parsed = rules.parse('10>=10');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('11>=10');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('10>=11');
+      expect(parsed.result).toBe(false);
+    });
+
+    it('operator: <=', function () {
+      parsed = rules.parse('10<=10');
+      expect(parsed.result).toBe(true);
+
+      parsed = rules.parse('12<=11');
+      expect(parsed.result).toBe(false);
+    });
+
+    it('operator: <>', function () {
+      parsed = rules.parse('10<>10');
+      expect(parsed.result).toBe(false);
+
+      parsed = rules.parse('12<>11');
+      expect(parsed.result).toBe(true);
+    });
+
+    it('operator: NOT', function () {
+      parsed = rules.parse('NOT(1)');
+      expect(parsed.result).toBe(false);
+
+      parsed = rules.parse('NOT(0)');
+      expect(parsed.result).toBe(true);
+    });
+  });
+
+  describe('math', function () {
+    it('operator: +', function () {
+      parsed = rules.parse('1+2');
+      expect(parsed.result).toBe(3);
+
+      parsed = rules.parse('SUM(1,2) + SUM(2,3)');
+      expect(parsed.result).toBe(8);
+    });
+
+    it('operator: -', function () {
+      parsed = rules.parse('2-1');
+      expect(parsed.result).toBe(1);
+
+      parsed = rules.parse('SUM(2,3) - SUM(1,2)');
+      expect(parsed.result).toBe(2);
+    });
+
+    it('operator: /', function () {
+      parsed = rules.parse('2/1');
+      expect(parsed.result).toBe(2);
+
+      parsed = rules.parse('2/0');
+      expect(parsed.result).toBe('#DIV/0!');
+    });
+  });
+
   it('ABS', function () {
     parsed = rules.parse('ABS(-1)');
     expect(parsed.result).toBe(1);

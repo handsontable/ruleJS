@@ -110,17 +110,17 @@ case 5:
 break;
 case 6:
 
-        this.$ = $$[$0].substring(1, $$[$0].length - 1);
+        this.$ = yy.handler.helper.string($$[$0]);
       
 break;
 case 7:
 
-        this.$ = $$[$0-2].toString() + $$[$0].toString();
+        this.$ = yy.handler.helper.specialMatch('&', $$[$0-2], $$[$0]);
       
 break;
 case 8:
 
-        {this.$ = $$[$0-2] == $$[$0]}
+        this.$ = yy.handler.helper.logicMatch('=', $$[$0-2], $$[$0]);
       
 break;
 case 9:
@@ -135,35 +135,32 @@ case 10:
 break;
 case 11:
 
-        {this.$ = $$[$0-3] <= $$[$0]}
+        this.$ = yy.handler.helper.logicMatch('<=', $$[$0-3], $$[$0]);
       
 break;
 case 12:
 
-        {this.$ = $$[$0-3] >= $$[$0]}
+        this.$ = yy.handler.helper.logicMatch('>=', $$[$0-3], $$[$0]);
       
 break;
 case 13:
 
-        this.$ = ($$[$0-3]) != ($$[$0]);
-        if (isNaN(this.$)) {
-            this.$ = 0;
-        }
+	      this.$ = yy.handler.helper.logicMatch('<>', $$[$0-3], $$[$0]);
       
 break;
 case 14:
 
-          this.$ = $$[$0-2] != $$[$0];
+        this.$ = yy.handler.helper.logicMatch('NOT', $$[$0-2], $$[$0]);
       
 break;
 case 15:
 
-        {this.$ = $$[$0-2] > $$[$0]}
+        this.$ = yy.handler.helper.logicMatch('>', $$[$0-2], $$[$0]);
       
 break;
 case 16:
 
-        {this.$ = $$[$0-2] < $$[$0]}
+        this.$ = yy.handler.helper.logicMatch('<', $$[$0-2], $$[$0]);
       
 break;
 case 17:
@@ -182,9 +179,6 @@ case 19:
       
 break;
 case 20:
-
-        var n1 = yy.handler.helper.number($$[$0-2]),
-            n2 = yy.handler.helper.number($$[$0]);
 
         this.$ = yy.handler.helper.mathMatch('^', $$[$0-2], $$[$0]);
       

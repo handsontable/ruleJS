@@ -85,13 +85,13 @@ expression
         $$ = yy.handler.helper.number($1);
       }
     | STRING {
-        $$ = $1.substring(1, $1.length - 1);
+        $$ = yy.handler.helper.string($1);
       }
     | expression '&' expression {
-        $$ = $1.toString() + $3.toString();
+        $$ = yy.handler.helper.specialMatch('&', $1, $3);
       }
     | expression '=' expression {
-        {$$ = $1 == $3}
+        $$ = yy.handler.helper.logicMatch('=', $1, $3);
       }
     | expression '+' expression {
         $$ = yy.handler.helper.mathMatch('+', $1, $3);
@@ -100,25 +100,22 @@ expression
         $$ = yy.handler.helper.number($2);
       }
     | expression '<' '=' expression {
-        {$$ = $1 <= $4}
+        $$ = yy.handler.helper.logicMatch('<=', $1, $4);
       }
     | expression '>' '=' expression {
-        {$$ = $1 >= $4}
+        $$ = yy.handler.helper.logicMatch('>=', $1, $4);
       }
 	  | expression '<' '>' expression {
-        $$ = ($1) != ($4);
-        if (isNaN($$)) {
-            $$ = 0;
-        }
+	      $$ = yy.handler.helper.logicMatch('<>', $1, $4);
       }
     | expression NOT expression {
-          $$ = $1 != $3;
+        $$ = yy.handler.helper.logicMatch('NOT', $1, $3);
       }
     | expression '>' expression {
-        {$$ = $1 > $3}
+        $$ = yy.handler.helper.logicMatch('>', $1, $3);
       }
     | expression '<' expression {
-        {$$ = $1 < $3}
+        $$ = yy.handler.helper.logicMatch('<', $1, $3);
       }
     | expression '-' expression {
         $$ = yy.handler.helper.mathMatch('-', $1, $3);
@@ -130,9 +127,6 @@ expression
         $$ = yy.handler.helper.mathMatch('/', $1, $3);
       }
     | expression '^' expression {
-        var n1 = yy.handler.helper.number($1),
-            n2 = yy.handler.helper.number($3);
-
         $$ = yy.handler.helper.mathMatch('^', $1, $3);
       }
     | '-' expression {

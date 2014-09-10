@@ -50,9 +50,55 @@ var ruleJS = (function (root) {
       newParser.yy.obj = obj;
     };
 
+    newParser.yy.parseError = function (str, hash) {
+//      if (!((hash.expected && hash.expected.indexOf("';'") >= 0) &&
+//        (hash.token === "}" || hash.token === "EOF" ||
+//          parser.newLine || parser.wasNewLine)))
+//      {
+//        throw new SyntaxError(hash);
+//      }
+      throw {
+        name: 'Parser error',
+        message: str,
+        prop: hash
+      }
+    };
+
     newParser.yy.handler = handler;
 
     return newParser;
+  };
+
+  /**
+   * Exception object
+   * @type {{errors: {type: string, output: string}[], get: get}}
+   */
+  var Exception = {
+    /**
+     * error types
+     */
+    errors: [
+      {type: 'NULL', output: '#NULL'},
+      {type: 'DIV_ZERO', output: '#DIV/0!'},
+      {type: 'VALUE', output: '#VALUE!'},
+      {type: 'REF', output: '#REF!'},
+      {type: 'NAME', output: '#NAME?'},
+      {type: 'NUM', output: '#NUM!'},
+      {type: 'NOT_AVAILABLE', output: '#N/A'},
+      {type: 'ERROR', output: '#ERROR'}
+    ],
+    /**
+     * get error by type
+     * @param {String} type
+     * @returns {*}
+     */
+    get: function (type) {
+      var error = Exception.errors.filter(function (item) {
+        return item.type === type
+      })[0];
+
+      return error ? error.output : null;
+    }
   };
 
   /**
@@ -61,12 +107,13 @@ var ruleJS = (function (root) {
   var Matrix = (function () {
     /**
      * single item (cell) object
-     * @type {{id: string, formula: string, value: string, deps: Array, formulaEdit: boolean}}
+     * @type {{id: string, formula: string, value: string, error: string, deps: Array, formulaEdit: boolean}}
      */
     var item = {
       id: '',
       formula: '',
       value: '',
+      error: '',
       deps: [],
       formulaEdit: false
     };
@@ -241,15 +288,16 @@ var ruleJS = (function (root) {
       // to avoid double translate formulas, update item data in parser
       var parsed = parse(formula, element),
           value = parsed.result,
+          error = parsed.error,
           nodeName = element.nodeName.toUpperCase();
 
-      updateElementItem(element, {value: value});
+      updateElementItem(element, {value: value, error: error});
 
       if (['INPUT'].indexOf(nodeName) === -1) {
-        element.innerText = value;
+        element.innerText = value || error;
       }
 
-      element.value = value;
+      element.value = value || error;
 
       return parsed;
     };
@@ -538,12 +586,82 @@ var ruleJS = (function (root) {
     },
 
     /**
+     * get string
+     * @param {Number|String} str
+     * @returns {string}
+     */
+    string: function (str) {
+      return str.substring(1, str.length - 1);
+    },
+
+    /**
      * invert number
      * @param num
      * @returns {Number}
      */
     numberInverted: function (num) {
       return this.number(num) * (-1);
+    },
+
+    /**
+     * match special operation
+     * @param {String} type
+     * @param {String} exp1
+     * @param {String} exp2
+     * @returns {*}
+     */
+    specialMatch: function (type, exp1, exp2) {
+      var result;
+
+      switch (type) {
+        case '&':
+          result = exp1.toString() + exp2.toString();
+          break;
+      }
+      return result;
+    },
+
+    /**
+     * match logic operation
+     * @param {String} type
+     * @param {String|Number} exp1
+     * @param {String|Number} exp2
+     * @returns {Boolean} result
+     */
+    logicMatch: function (type, exp1, exp2) {
+      var result;
+
+      switch (type) {
+        case '=':
+          result = (exp1 === exp2);
+          break;
+
+        case '>':
+          result = (exp1 > exp2);
+          break;
+
+        case '<':
+          result = (exp1 < exp2);
+          break;
+
+        case '>=':
+          result = (exp1 >= exp2);
+          break;
+
+        case '<=':
+          result = (exp1 === exp2);
+          break;
+
+        case '<>':
+          result = (exp1 != exp2);
+          break;
+
+        case 'NOT':
+          result = (exp1 != exp2);
+          break;
+      }
+
+      return result;
     },
 
     /**
@@ -555,8 +673,13 @@ var ruleJS = (function (root) {
      */
     mathMatch: function (type, number1, number2) {
       var result;
-      number1 = !isNaN(number1) ? parseInt(number1, 10) : 0;
-      number2 = !isNaN(number2) ? parseInt(number2, 10) : 0;
+
+      number1 = helper.number(number1);
+      number2 = helper.number(number2);
+
+      if (isNaN(number1) || isNaN(number2)) {
+        throw Error('VALUE');
+      }
 
       switch (type) {
         case '+':
@@ -567,8 +690,10 @@ var ruleJS = (function (root) {
           break;
         case '/':
           result = number1 / number2;
-          if (value == Infinity || isNaN(result)) {
-            result = 0;
+          if (result == Infinity) {
+            throw Error('DIV_ZERO');
+          } else if (isNaN(result)) {
+            throw Error('VALUE');
           }
           break;
         case '*':
@@ -598,7 +723,7 @@ var ruleJS = (function (root) {
         }
       }
 
-      return false;
+      throw Error('NAME');
     },
 
     /**
@@ -617,7 +742,7 @@ var ruleJS = (function (root) {
         }
       }
 
-      return false;
+      throw Error('NAME');
     },
 
     /**
@@ -659,7 +784,9 @@ var ruleJS = (function (root) {
      * @returns {*}
      */
     fixedCellValue: function (id) {
-      debugger;
+      id = id.replace(/\$/g, '');
+
+      return instance.helper.cellValue.call(this, id);
     },
 
     /**
@@ -669,7 +796,10 @@ var ruleJS = (function (root) {
      * @returns {Array}
      */
     fixedCellRangeValue: function (start, end) {
-      debugger;
+      start = start.replace(/\$/g, '');
+      end = end.replace(/\$/g, '');
+
+      return instance.helper.cellRangeValue.call(this, start, end);
     }
   };
 
@@ -690,7 +820,19 @@ var ruleJS = (function (root) {
 
       error = null;
     } catch (ex) {
-      error = ex.message;
+
+      var message = Exception.get(ex.message);
+
+      if (message) {
+        error = message;
+      } else {
+        error = Exception.get('ERROR');
+      }
+
+      console.debug(ex.prop);
+      //debugger;
+      //error = ex.message;
+      //error = Exception.get('ERROR');
     }
 
     return {
