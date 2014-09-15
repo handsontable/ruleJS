@@ -217,12 +217,12 @@ var ruleJS = (function (root) {
     };
 
     /**
-     * recalculate refs cell
-     * @param {String} id
+     * get total cell dependencies
+     * @param {Element} element
+     * @returns {Array}
      */
-    var recalculateDependencies = function (id) {
-
-      var allDependencies = [];
+    var getElementDependencies = function (element) {
+      var id = element.getAttribute('id');
 
       /**
        * get dependencies by element
@@ -245,6 +245,8 @@ var ruleJS = (function (root) {
 
         return deps;
       };
+
+      var allDependencies = [];
 
       /**
        * get total dependencies
@@ -269,6 +271,17 @@ var ruleJS = (function (root) {
 
       getTotalDependencies(id);
 
+      return allDependencies;
+    };
+
+    /**
+     * recalculate refs cell
+     * @param {Element} element
+     */
+    var recalculateDependencies = function (element) {
+      var allDependencies = getElementDependencies(element),
+          id = element.getAttribute('id');
+
       allDependencies.forEach(function (refId) {
         var item = getItem(refId);
         if (item && item.formula) {
@@ -291,7 +304,7 @@ var ruleJS = (function (root) {
           error = parsed.error,
           nodeName = element.nodeName.toUpperCase();
 
-      updateElementItem(element, {value: value, error: error});
+        updateElementItem(element, {value: value, error: error});
 
       if (['INPUT'].indexOf(nodeName) === -1) {
         element.innerText = value || error;
@@ -308,6 +321,7 @@ var ruleJS = (function (root) {
      * @returns {Object}
      */
     var registerInMatrix = function (element) {
+
       var id = element.getAttribute('id'),
           formula = element.getAttribute('data-formula');
 
@@ -321,6 +335,7 @@ var ruleJS = (function (root) {
 
         calculateElementFormula(formula, element);
       }
+
     };
 
     /**
@@ -345,7 +360,7 @@ var ruleJS = (function (root) {
 
         if (item) {
           if (item.formulaEdit) {
-            element.value = item.value;
+            element.value = item.value || item.error;
           }
 
           item.formulaEdit = false;
@@ -372,13 +387,12 @@ var ruleJS = (function (root) {
         var value = element.value;
 
         if (value[0] === '=') {
-          // TODO: handle #REF!
           element.setAttribute('data-formula', value.substr(1));
           registerInMatrix(element);
         }
 
         // get ref cells and re-calculate formulas
-        recalculateDependencies(id);
+        recalculateDependencies(element);
       });
     };
 
@@ -397,7 +411,8 @@ var ruleJS = (function (root) {
 
     return {
       scan: scan,
-      updateElementItem: updateElementItem
+      updateElementItem: updateElementItem,
+      getElementDependencies: getElementDependencies
     }
   });
 
@@ -814,11 +829,17 @@ var ruleJS = (function (root) {
         error = null;
 
     try {
-
       parser.setObj(element);
       result = parser.parse(formula);
 
-      error = null;
+      var deps = matrix.getElementDependencies(element),
+          id = element.getAttribute('id');
+
+      if (deps.indexOf(id) > -1) {
+        result = null;
+        throw Error('REF');
+      }
+
     } catch (ex) {
 
       var message = Exception.get(ex.message);
@@ -829,7 +850,7 @@ var ruleJS = (function (root) {
         error = Exception.get('ERROR');
       }
 
-      console.debug(ex.prop);
+      //console.debug(ex.prop);
       //debugger;
       //error = ex.message;
       //error = Exception.get('ERROR');
