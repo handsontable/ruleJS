@@ -1,7 +1,7 @@
 /*
-* TODO:
-* 1) error handling
-* */
+ * TODO:
+ * 1) error handling
+ * */
 
 var ruleJS = (function (root) {
   'use strict';
@@ -104,7 +104,8 @@ var ruleJS = (function (root) {
   /**
    * matrix collection for each form, contains cache of all form element
    */
-  var Matrix = (function () {
+  var Matrix = function () {
+
     /**
      * single item (cell) object
      * @type {{id: string, formula: string, value: string, error: string, deps: Array, formulaEdit: boolean}}
@@ -144,8 +145,8 @@ var ruleJS = (function (root) {
      * @param {String} id
      * @returns {*}
      */
-    var getItem = function (id) {
-      return data.filter(function(item) {
+    this.getItem = function (id) {
+      return data.filter(function (item) {
         return item.id === id;
       })[0];
     };
@@ -154,18 +155,22 @@ var ruleJS = (function (root) {
      * remove item from data array
      * @param {String} id
      */
-    var removeItem = function (id) {
-      data = data.filter(function(item) {
+    this.removeItem = function (id) {
+      data = data.filter(function (item) {
         return item.id !== id;
       });
     };
 
     /**
      * update item properties
-     * @param {Object} item
+     * @param {Object|String} item or id
      * @param {Object} props
      */
-    var updateItem = function (item, props) {
+    this.updateItem = function (item, props) {
+      if (instance.utils.isString(item)) {
+        item = instance.matrix.getItem(item);
+      }
+
       if (item && props) {
         for (var p in props) {
           if (item[p] && instance.utils.isArray(item[p])) {
@@ -192,7 +197,7 @@ var ruleJS = (function (root) {
      * add item to data array
      * @param {Object} item
      */
-    var addItem = function (item) {
+    this.addItem = function (item) {
       var cellExist = data.filter(function (cell) {
         return cell.id === item.id
       })[0];
@@ -200,8 +205,10 @@ var ruleJS = (function (root) {
       if (!cellExist) {
         data.push(item);
       } else {
-        updateItem(cellExist, item);
+        instance.matrix.updateItem(cellExist, item);
       }
+
+      return instance.matrix.getItem(item.id);
     };
 
     /**
@@ -209,21 +216,19 @@ var ruleJS = (function (root) {
      * @param {Element} element
      * @param {Object} props
      */
-    var updateElementItem = function (element, props) {
+    this.updateElementItem = function (element, props) {
       var id = element.getAttribute('id'),
-          item = getItem(id);
+        item = instance.matrix.getItem(id);
 
-      updateItem(item, props);
+      instance.matrix.updateItem(item, props);
     };
 
     /**
-     * get total cell dependencies
-     * @param {Element} element
+     * get cell dependencies
+     * @param {String} id
      * @returns {Array}
      */
-    var getElementDependencies = function (element) {
-      var id = element.getAttribute('id');
-
+    this.getDependencies = function (id) {
       /**
        * get dependencies by element
        * @param {String} id
@@ -260,7 +265,7 @@ var ruleJS = (function (root) {
             if (allDependencies.indexOf(refId) === -1) {
               allDependencies.push(refId);
 
-              var item = getItem(refId);
+              var item = instance.matrix.getItem(refId);
               if (item.deps.length) {
                 getTotalDependencies(refId);
               }
@@ -275,15 +280,24 @@ var ruleJS = (function (root) {
     };
 
     /**
+     * get total element cell dependencies
+     * @param {Element} element
+     * @returns {Array}
+     */
+    this.getElementDependencies = function (element) {
+      return instance.matrix.getDependencies(element.getAttribute('id'));
+    };
+
+    /**
      * recalculate refs cell
      * @param {Element} element
      */
-    var recalculateDependencies = function (element) {
-      var allDependencies = getElementDependencies(element),
-          id = element.getAttribute('id');
+    var recalculateElementDependencies = function (element) {
+      var allDependencies = instance.matrix.getElementDependencies(element),
+        id = element.getAttribute('id');
 
       allDependencies.forEach(function (refId) {
-        var item = getItem(refId);
+        var item = instance.matrix.getItem(refId);
         if (item && item.formula) {
           var refElement = document.getElementById(refId);
           calculateElementFormula(item.formula, refElement);
@@ -300,11 +314,11 @@ var ruleJS = (function (root) {
     var calculateElementFormula = function (formula, element) {
       // to avoid double translate formulas, update item data in parser
       var parsed = parse(formula, element),
-          value = parsed.result,
-          error = parsed.error,
-          nodeName = element.nodeName.toUpperCase();
+        value = parsed.result,
+        error = parsed.error,
+        nodeName = element.nodeName.toUpperCase();
 
-        updateElementItem(element, {value: value, error: error});
+      instance.matrix.updateElementItem(element, {value: value, error: error});
 
       if (['INPUT'].indexOf(nodeName) === -1) {
         element.innerText = value || error;
@@ -320,15 +334,15 @@ var ruleJS = (function (root) {
      * @param {Element} element
      * @returns {Object}
      */
-    var registerInMatrix = function (element) {
+    var registerElementInMatrix = function (element) {
 
       var id = element.getAttribute('id'),
-          formula = element.getAttribute('data-formula');
+        formula = element.getAttribute('data-formula');
 
       if (formula) {
 
         // add item with basic properties to data array
-        addItem({
+        instance.matrix.addItem({
           id: id,
           formula: formula
         });
@@ -342,12 +356,12 @@ var ruleJS = (function (root) {
      * register events for elements
      * @param element
      */
-    var registerEvents = function (element) {
+    var registerElementEvents = function (element) {
       var id = element.getAttribute('id');
 
       // on db click show formula
       element.addEventListener('dblclick', function () {
-        var item = getItem(id);
+        var item = instance.matrix.getItem(id);
 
         if (item && item.formula) {
           item.formulaEdit = true;
@@ -356,7 +370,7 @@ var ruleJS = (function (root) {
       });
 
       element.addEventListener('blur', function () {
-        var item = getItem(id);
+        var item = instance.matrix.getItem(id);
 
         if (item) {
           if (item.formulaEdit) {
@@ -381,40 +395,34 @@ var ruleJS = (function (root) {
       // re-calculate formula if ref cells value changed
       element.addEventListener('change', function () {
         // reset and remove item
-        removeItem(id);
+        instance.matrix.removeItem(id);
 
         // check if inserted text could be the formula
         var value = element.value;
 
         if (value[0] === '=') {
           element.setAttribute('data-formula', value.substr(1));
-          registerInMatrix(element);
+          registerElementInMatrix(element);
         }
 
         // get ref cells and re-calculate formulas
-        recalculateDependencies(element);
+        recalculateElementDependencies(element);
       });
     };
 
     /**
      * scan the form and build the calculation matrix
      */
-    var scan = function () {
+    this.scan = function () {
       var $totalElements = rootElement.querySelectorAll(formElements);
 
       // iterate through elements contains specified attributes
       [].slice.call($totalElements).forEach(function ($item) {
-        registerInMatrix($item);
-        registerEvents($item);
+        registerElementInMatrix($item);
+        registerElementEvents($item);
       });
     };
-
-    return {
-      scan: scan,
-      updateElementItem: updateElementItem,
-      getElementDependencies: getElementDependencies
-    }
-  });
+  };
 
   /**
    * utils methods
@@ -428,6 +436,15 @@ var ruleJS = (function (root) {
      */
     isArray: function (value) {
       return Object.prototype.toString.call(value) === '[object Array]';
+    },
+
+    /**
+     * check if value is string
+     * @param value
+     * @returns {boolean}
+     */
+    isString: function (value) {
+      return Object.prototype.toString.call(value) === '[object String]';
     },
 
     /**
@@ -448,7 +465,7 @@ var ruleJS = (function (root) {
       chr = chr.split('');
 
       var base = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-          i, j, result = 0;
+        i, j, result = 0;
 
       for (i = 0, j = chr.length - 1; i < chr.length; i += 1, j -= 1) {
         result += Math.pow(base.length, j) * (base.indexOf(chr[i]) + 1);
@@ -476,7 +493,7 @@ var ruleJS = (function (root) {
 
     /**
      * get cell coordinates
-     * @param {String} cell
+     * @param {String} cell A1
      * @returns {{row: Number, col: number}}
      */
     cellCoords: function (cell) {
@@ -485,8 +502,17 @@ var ruleJS = (function (root) {
 
       return {
         row: parseInt(num[0], 10),
-        col: instance.utils.toNum(alpha)
+        col: instance.utils.toNum(alpha) - 1
       };
+    },
+
+    /**
+     * translate cell coordinates to merged form {row:1, col:2} -> A1
+     * @param coords
+     * @returns {string}
+     */
+    translateCellCoords: function (coords) {
+      return instance.utils.toChar(coords.col) + '' + coords.row;
     },
 
     /**
@@ -538,9 +564,18 @@ var ruleJS = (function (root) {
 
       for (var column = cols.start; column <= cols.end; column++) {
         for (var row = rows.start; row <= rows.end; row++) {
+          var cellIndex = instance.utils.toChar(column + 1) + row,
+            cellValue;
 
-          var cellIndex = instance.utils.toChar(column) + row;
-          var cellValue = instance.helper.number(document.getElementById(cellIndex).value);
+          cellValue = instance.helper.cellValue(cellIndex);
+
+//          if (instance.custom.cellValue) {
+//            cellValue = instance.custom.cellValue(row, column);
+//          } else {
+//            cellValue = document.getElementById(cellIndex).value;
+//          }
+
+          cellValue = instance.helper.number(cellValue);
 
           result.index.push(cellIndex);
           result.value.push(cellValue);
@@ -733,8 +768,8 @@ var ruleJS = (function (root) {
       args = args || [];
 
       if (instance.helper.SUPPORTED_FORMULAS.indexOf(fn) > -1) {
-        if (formulas[fn]) {
-          return formulas[fn].apply(this, args);
+        if (instance.formulas[fn]) {
+          return instance.formulas[fn].apply(this, args);
         }
       }
 
@@ -752,8 +787,8 @@ var ruleJS = (function (root) {
 
       if (str) {
         str = str.toUpperCase();
-        if (formulas[str]) {
-          return ((typeof formulas[str] === 'function') ? formulas[str].apply(this, args) : formulas[str]);
+        if (instance.formulas[str]) {
+          return ((typeof instance.formulas[str] === 'function') ? instance.formulas[str].apply(this, args) : instance.formulas[str]);
         }
       }
 
@@ -766,30 +801,68 @@ var ruleJS = (function (root) {
      * @returns {*}
      */
     cellValue: function (cell) {
-      var value = document.getElementById(cell).value;
+      var value,
+        fnCellValue = instance.custom.cellValue,
+        element = this,
+        item = instance.matrix.getItem(cell);
 
-      matrix.updateElementItem(this, {deps: [cell]});
+      // check if custom cellValue fn exists
+      if (instance.utils.isFunction(fnCellValue)) {
+        var cellCoords = instance.utils.cellCoords(cell),
+          cellId = instance.utils.translateCellCoords({row: element.row, col: element.col + 1});
+
+        // get value
+        value = item ? item.value : fnCellValue(cellCoords.row, cellCoords.col);
+
+        if (cellId) {
+          //update dependencies
+          instance.matrix.updateItem(cellId, {deps: [cell]});
+        }
+
+      } else {
+
+        // get value
+        value = item ? item.value : document.getElementById(cell).value;
+
+        //update dependencies
+        instance.matrix.updateElementItem(element, {deps: [cell]});
+
+      }
 
       return instance.helper.number(value);
     },
 
     /**
      * Get cell range values
-     * @param {String} start cell
-     * @param {String} end cell
+     * @param {String} start cell A1
+     * @param {String} end cell B3
      * @returns {Array}
      */
     cellRangeValue: function (start, end) {
-      var coordsStart = instance.utils.cellCoords(start),
-          coordsEnd = instance.utils.cellCoords(end);
+      var fnCellValue = instance.custom.cellValue,
+        coordsStart = instance.utils.cellCoords(start),
+        coordsEnd = instance.utils.cellCoords(end),
+        element = this;
 
+      // iterate cells to get values and indexes
       var cells = instance.utils.iterateCells(coordsStart, coordsEnd),
-          result = [];
+        result = [];
+
+      // check if custom cellValue fn exists
+      if (instance.utils.isFunction(fnCellValue)) {
+
+        var cellId = instance.utils.translateCellCoords({row: element.row, col: element.col + 1});
+
+        //update dependencies
+        instance.matrix.updateItem(cellId, {deps: cells.index});
+
+      } else {
+
+        //update dependencies
+        instance.matrix.updateElementItem(element, {deps: cells.index});
+      }
 
       result.push(cells.value);
-
-      matrix.updateElementItem(this, {deps: cells.index});
-
       return result;
     },
 
@@ -826,19 +899,19 @@ var ruleJS = (function (root) {
    */
   var parse = function (formula, element) {
     var result = null,
-        error = null;
+      error = null;
 
     try {
       parser.setObj(element);
       result = parser.parse(formula);
 
-      var deps = matrix.getElementDependencies(element),
-          id = element.getAttribute('id');
-
-      if (deps.indexOf(id) > -1) {
-        result = null;
-        throw Error('REF');
-      }
+//      var deps = instance.matrix.getElementDependencies(element),
+//        id = element.getAttribute('id');
+//
+//      if (deps.indexOf(id) > -1) {
+//        result = null;
+//        throw Error('REF');
+//      }
 
     } catch (ex) {
 
@@ -862,30 +935,29 @@ var ruleJS = (function (root) {
     }
   };
 
-  var matrix = null;
-
   /**
    * initial method, create formulas, parser and matrix objects
    */
   var init = function () {
     instance = this;
 
-    formulas = Formula;
     parser = new FormulaParser(instance);
 
+    instance.formulas = Formula;
+    instance.matrix = new Matrix();
+
     if (rootElement) {
-      matrix = new Matrix();
-      matrix.scan();
+      instance.matrix.scan();
     }
   };
 
   return {
     init: init,
     version: version,
-    formulas: formulas,
     utils: utils,
     helper: helper,
-    parse: parse
+    parse: parse,
+    custom: null
   };
 
 });
