@@ -119,7 +119,8 @@ describe('parse()', function () {
       expect(parsed.result).toBe(2);
 
       parsed = rules.parse('2/0');
-      expect(parsed.result).toBe('#DIV/0!');
+      expect(parsed.result).toBe(null);
+      expect(parsed.error).toBe('#DIV/0!');
     });
   });
 

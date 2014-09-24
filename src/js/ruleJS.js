@@ -540,8 +540,21 @@ var ruleJS = (function (root) {
       }
 
       if (type && counter) {
-        return formula.replace(/(\$?[A-Za-z]+\$?[0-9]+)/g, function (match, p1, p2, p3, p4) {
-          debugger;
+        return formula.replace(/(\$?[A-Za-z]+\$?[0-9]+)/g, function (match) {
+
+          var alpha = instance.utils.getCellAlphaNum(match).alpha;
+
+          var fixedCol = alpha[0] === '$' || false,
+            fixedRow = alpha[alpha.length - 1] === '$' || false;
+
+          if (type === 'row' && fixedRow) {
+            return match;
+          }
+
+          if (type === 'col' && fixedCol) {
+            return match;
+          }
+
           return (type === 'row' ? instance.utils.changeRowIndex(match, counter) : instance.utils.changeColIndex(match, counter));
         });
       }
@@ -549,6 +562,13 @@ var ruleJS = (function (root) {
       return formula;
     },
 
+    /**
+     * update value
+     * @param {Number} value
+     * @param {String} (left, right, up, down) direction
+     * @param {Number} delta
+     * @returns {*}
+     */
     updateValue: function (value, direction, delta) {
       var counter;
 
@@ -673,7 +693,7 @@ var ruleJS = (function (root) {
       for (var column = cols.start; column <= cols.end; column++) {
         for (var row = rows.start; row <= rows.end; row++) {
           var cellIndex = instance.utils.toChar(column) + (row + 1),
-              cellValue = instance.helper.cellValue.call(this, cellIndex);
+            cellValue = instance.helper.cellValue.call(this, cellIndex);
 
           result.index.push(cellIndex);
           result.value.push(cellValue);
@@ -925,7 +945,6 @@ var ruleJS = (function (root) {
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
-
       }
 
       if (!instance.utils.isUndefined(value)) {
