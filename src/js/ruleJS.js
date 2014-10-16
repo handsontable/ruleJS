@@ -18,13 +18,6 @@ var ruleJS = (function (root) {
   var version = '0.0.1';
 
   /**
-   * formulas delivered by formulaJS library
-   * contains most of Microsoft Excel formula functions
-   * @type {Window.Formula|*|{}}
-   */
-  var formulas = {};
-
-  /**
    * parser object delivered by jison library
    * @type {Parser|*|{}}
    */
@@ -79,7 +72,7 @@ var ruleJS = (function (root) {
       {type: 'REF', output: '#REF!'},
       {type: 'NAME', output: '#NAME?'},
       {type: 'NUM', output: '#NUM!'},
-      {type: 'NOT_AVAILABLE', output: '#N/A'},
+      {type: 'NOT_AVAILABLE', output: '#N/A!'},
       {type: 'ERROR', output: '#ERROR'}
     ],
     /**
@@ -89,7 +82,7 @@ var ruleJS = (function (root) {
      */
     get: function (type) {
       var error = Exception.errors.filter(function (item) {
-        return item.type === type
+        return item.type === type || item.output === type;
       })[0];
 
       return error ? error.output : null;
@@ -118,7 +111,7 @@ var ruleJS = (function (root) {
      * array of items
      * @type {Array}
      */
-    var data = [];
+    this.data = [];
 
     /**
      * form elements, which can be parsed
@@ -141,7 +134,7 @@ var ruleJS = (function (root) {
      * @returns {*}
      */
     this.getItem = function (id) {
-      return data.filter(function (item) {
+      return instance.matrix.data.filter(function (item) {
         return item.id === id;
       })[0];
     };
@@ -151,9 +144,49 @@ var ruleJS = (function (root) {
      * @param {String} id
      */
     this.removeItem = function (id) {
-      data = data.filter(function (item) {
+      instance.matrix.data = instance.matrix.data.filter(function (item) {
         return item.id !== id;
       });
+    };
+
+    /**
+     * remove items from data array in col
+     * @param {Number} col
+     */
+    this.removeItemsInCol = function (col) {
+      instance.matrix.data = instance.matrix.data.filter(function (item) {
+        return item.col !== col;
+      });
+    };
+
+    /**
+     * remove items from data array in row
+     * @param {Number} row
+     */
+    this.removeItemsInRow = function (row) {
+      instance.matrix.data = instance.matrix.data.filter(function (item) {
+        return item.row !== row;
+      })
+    };
+
+    /**
+     * remove items from data array below col
+     * @param col
+     */
+    this.removeItemsBelowCol = function (col) {
+      instance.matrix.data = instance.matrix.data.filter(function (item) {
+        return item.col < col;
+      });
+    };
+
+    /**
+     * remove items from data array below row
+     * @param row
+     */
+    this.removeItemsBelowRow = function (row) {
+      instance.matrix.data = instance.matrix.data.filter(function (item) {
+        return item.row < row;
+      })
     };
 
     /**
@@ -193,17 +226,77 @@ var ruleJS = (function (root) {
      * @param {Object} item
      */
     this.addItem = function (item) {
-      var cellExist = data.filter(function (cell) {
-        return cell.id === item.id
+      var cellId = item.id,
+        coords = instance.utils.cellCoords(cellId);
+
+      item.row = coords.row;
+      item.col = coords.col;
+
+      var cellExist = instance.matrix.data.filter(function (cell) {
+        return cell.id === cellId;
       })[0];
 
       if (!cellExist) {
-        data.push(item);
+        instance.matrix.data.push(item);
       } else {
         instance.matrix.updateItem(cellExist, item);
       }
 
-      return instance.matrix.getItem(item.id);
+      return instance.matrix.getItem(cellId);
+    };
+
+    /**
+     * get references items to column
+     * @param {Number} col
+     * @returns {Array}
+     */
+    this.getRefItemsToColumn = function (col) {
+      var result = [];
+
+      if (!instance.matrix.data.length) {
+        return result;
+      }
+
+      instance.matrix.data.forEach(function (item) {
+        if (item.deps) {
+          var deps = item.deps.filter(function (cell) {
+
+            var alpha = instance.utils.getCellAlphaNum(cell).alpha,
+              num = instance.utils.toNum(alpha);
+
+            return num >= col;
+          });
+
+          if (deps.length > 0 && result.indexOf(item.id) === -1) {
+            result.push(item.id);
+          }
+        }
+      });
+
+      return result;
+    };
+
+    this.getRefItemsToRow = function (row) {
+      var result = [];
+
+      if (!instance.matrix.data.length) {
+        return result;
+      }
+
+      instance.matrix.data.forEach(function (item) {
+        if (item.deps) {
+          var deps = item.deps.filter(function (cell) {
+            var num = instance.utils.getCellAlphaNum(cell).num;
+            return num > row;
+          });
+
+          if (deps.length > 0 && result.indexOf(item.id) === -1) {
+            result.push(item.id);
+          }
+        }
+      });
+
+      return result;
     };
 
     /**
@@ -230,7 +323,7 @@ var ruleJS = (function (root) {
        * @returns {Array}
        */
       var getDependencies = function (id) {
-        var filtered = data.filter(function (cell) {
+        var filtered = instance.matrix.data.filter(function (cell) {
           if (cell.deps) {
             return cell.deps.indexOf(id) > -1;
           }
@@ -404,6 +497,22 @@ var ruleJS = (function (root) {
       });
     };
 
+    this.depsInFormula = function (item) {
+
+      var formula = item.formula,
+        deps = item.deps;
+
+      if (deps) {
+        deps = deps.filter(function (id) {
+          return formula.indexOf(id) !== -1;
+        });
+
+        return deps.length > 0;
+      }
+
+      return false;
+    };
+
     /**
      * scan the form and build the calculation matrix
      */
@@ -469,6 +578,24 @@ var ruleJS = (function (root) {
     },
 
     /**
+     * check if value is null
+     * @param value
+     * @returns {boolean}
+     */
+    isNull: function (value) {
+      return Object.prototype.toString.call(value) === '[object Null]';
+    },
+
+    /**
+     * check if value is set
+     * @param value
+     * @returns {boolean}
+     */
+    isSet: function (value) {
+      return !instance.utils.isUndefined(value) && !instance.utils.isNull(value);
+    },
+
+    /**
      * check if value is cell
      * @param {String} value
      * @returns {Boolean}
@@ -499,8 +626,16 @@ var ruleJS = (function (root) {
      * @returns {String}
      */
     changeRowIndex: function (cell, counter) {
-      var cellCoords = instance.utils.getCellAlphaNum(cell);
-      return cellCoords.alpha + '' + parseInt(cellCoords.num + counter, 10);
+      var alphaNum = instance.utils.getCellAlphaNum(cell),
+        alpha = alphaNum.alpha,
+        col = alpha,
+        row = parseInt(alphaNum.num + counter, 10);
+
+      if (row < 1) {
+        row = 1;
+      }
+
+      return col + '' + row;
     },
 
     /**
@@ -510,12 +645,54 @@ var ruleJS = (function (root) {
      * @returns {String}
      */
     changeColIndex: function (cell, counter) {
-      var cellCoords = instance.utils.getCellAlphaNum(cell);
-      return instance.utils.toChar(parseInt(instance.utils.toNum(cellCoords.alpha) + counter, 10)) + cellCoords.num;
+      var alphaNum = instance.utils.getCellAlphaNum(cell),
+        alpha = alphaNum.alpha,
+        col = instance.utils.toChar(parseInt(instance.utils.toNum(alpha) + counter, 10)),
+        row = alphaNum.num;
+
+      if (!col || col.length === 0) {
+        col = 'A';
+      }
+
+      var fixedCol = alpha[0] === '$' || false,
+        fixedRow = alpha[alpha.length - 1] === '$' || false;
+
+      col = (fixedCol ? '$' : '') + col;
+      row = (fixedRow ? '$' : '') + row;
+
+      return col + '' + row;
+    },
+
+
+    changeFormula: function (formula, delta, change) {
+      if (!delta) {
+        delta = 1;
+      }
+
+      return formula.replace(/(\$?[A-Za-z]+\$?[0-9]+)/g, function (match) {
+        var alphaNum = instance.utils.getCellAlphaNum(match),
+          alpha = alphaNum.alpha,
+          num = alphaNum.num;
+
+        if (instance.utils.isNumber(change.col)) {
+          num = instance.utils.toNum(alpha);
+
+          if (change.col <= num) {
+            return instance.utils.changeColIndex(match, delta);
+          }
+        }
+
+        if (instance.utils.isNumber(change.row)) {
+          if (change.row < num) {
+            return instance.utils.changeRowIndex(match, delta);
+          }
+        }
+
+        return match;
+      });
     },
 
     /**
-     * TODO: absolute cells
      * update formula cells
      * @param {String} formula
      * @param {String} direction
@@ -533,6 +710,7 @@ var ruleJS = (function (root) {
         type = 'row'
       }
 
+      // down, up -> row
       if (['down', 'right'].indexOf(direction) !== -1) {
         counter = delta * 1;
       } else if(['up', 'left'].indexOf(direction) !== -1) {
@@ -563,35 +741,12 @@ var ruleJS = (function (root) {
     },
 
     /**
-     * update value
-     * @param {Number} value
-     * @param {String} (left, right, up, down) direction
-     * @param {Number} delta
-     * @returns {*}
-     */
-    updateValue: function (value, direction, delta) {
-      var counter;
-
-      if (['down', 'right'].indexOf(direction) !== -1) {
-        counter = delta * 1;
-      } else if(['up', 'left'].indexOf(direction) !== -1) {
-        counter = delta * (-1);
-      }
-
-      if (counter) {
-        value += counter;
-      }
-
-      return value;
-    },
-
-    /**
      * convert string char to number e.g A => 0, Z => 25, AA => 27
      * @param {String} chr
      * @returns {Number}
      */
     toNum: function (chr) {
-      chr = chr.split('');
+      chr = instance.utils.clearFormula(chr).split('');
 
       var base = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
         i, j, result = 0;
@@ -632,6 +787,15 @@ var ruleJS = (function (root) {
         row: parseInt(num[0], 10) - 1,
         col: instance.utils.toNum(alpha)
       };
+    },
+
+    /**
+     * remove $ from formula
+     * @param {String} formula
+     * @returns {String|void}
+     */
+    clearFormula: function (formula) {
+      return formula.replace(/\$/g, '');
     },
 
     /**
@@ -704,6 +868,12 @@ var ruleJS = (function (root) {
         return callback.apply(callback, [result]);
       } else {
         return result;
+      }
+    },
+
+    sort: function (rev) {
+      return function (a, b) {
+        return ((a < b) ? -1 : ((a > b) ? 1 : 0)) * (rev ? -1 : 1);
       }
     }
   };
@@ -933,6 +1103,10 @@ var ruleJS = (function (root) {
         // get value
         value = item ? item.value : fnCellValue(cellCoords.row, cellCoords.col);
 
+        if (instance.utils.isNull(value)) {
+          value = 0;
+        }
+
         if (cellId) {
           //update dependencies
           instance.matrix.updateItem(cellId, {deps: [cell]});
@@ -947,10 +1121,26 @@ var ruleJS = (function (root) {
         instance.matrix.updateElementItem(element, {deps: [cell]});
       }
 
-      if (!instance.utils.isUndefined(value)) {
-        return instance.helper.number(value);
+      // check references error
+      if (item && item.deps) {
+        if (item.deps.indexOf(cellId) !== -1) {
+          throw Error('REF');
+        }
       }
 
+      // check if any error occurs
+      if (item && item.error) {
+        throw Error(item.error);
+      }
+
+      // return value if is set
+      if (instance.utils.isSet(value)) {
+        var result = instance.helper.number(value);
+
+        return !isNaN(result) ? result : value;
+      }
+
+      // cell is not available
       throw Error('NOT_AVAILABLE');
     },
 
@@ -1027,13 +1217,25 @@ var ruleJS = (function (root) {
       parser.setObj(element);
       result = parser.parse(formula);
 
-//      var deps = instance.matrix.getElementDependencies(element),
-//        id = element.getAttribute('id');
-//
-//      if (deps.indexOf(id) > -1) {
-//        result = null;
-//        throw Error('REF');
-//      }
+      var id;
+
+      if (element instanceof HTMLElement) {
+        id = element.getAttribute('id');
+      } else if (element && element.id) {
+        id = element.id;
+      }
+
+      var deps = instance.matrix.getDependencies(id);
+
+      if (deps.indexOf(id) !== -1) {
+        result = null;
+
+        deps.forEach(function (id) {
+          instance.matrix.updateItem(id, {value: null, error: Exception.get('REF')});
+        });
+
+        throw Error('REF');
+      }
 
     } catch (ex) {
 
@@ -1080,8 +1282,7 @@ var ruleJS = (function (root) {
     version: version,
     utils: utils,
     helper: helper,
-    parse: parse,
-    custom: null
+    parse: parse
   };
 
 });
