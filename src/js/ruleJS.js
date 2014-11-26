@@ -227,7 +227,7 @@ var ruleJS = (function (root) {
      */
     this.addItem = function (item) {
       var cellId = item.id,
-        coords = instance.utils.cellCoords(cellId);
+          coords = instance.utils.cellCoords(cellId);
 
       item.row = coords.row;
       item.col = coords.col;
@@ -306,7 +306,7 @@ var ruleJS = (function (root) {
      */
     this.updateElementItem = function (element, props) {
       var id = element.getAttribute('id'),
-        item = instance.matrix.getItem(id);
+          item = instance.matrix.getItem(id);
 
       instance.matrix.updateItem(item, props);
     };
@@ -382,7 +382,7 @@ var ruleJS = (function (root) {
      */
     var recalculateElementDependencies = function (element) {
       var allDependencies = instance.matrix.getElementDependencies(element),
-        id = element.getAttribute('id');
+          id = element.getAttribute('id');
 
       allDependencies.forEach(function (refId) {
         var item = instance.matrix.getItem(refId);
@@ -402,9 +402,9 @@ var ruleJS = (function (root) {
     var calculateElementFormula = function (formula, element) {
       // to avoid double translate formulas, update item data in parser
       var parsed = parse(formula, element),
-        value = parsed.result,
-        error = parsed.error,
-        nodeName = element.nodeName.toUpperCase();
+          value = parsed.result,
+          error = parsed.error,
+          nodeName = element.nodeName.toUpperCase();
 
       instance.matrix.updateElementItem(element, {value: value, error: error});
 
@@ -425,7 +425,7 @@ var ruleJS = (function (root) {
     var registerElementInMatrix = function (element) {
 
       var id = element.getAttribute('id'),
-        formula = element.getAttribute('data-formula');
+          formula = element.getAttribute('data-formula');
 
       if (formula) {
         // add item with basic properties to data array
@@ -500,7 +500,7 @@ var ruleJS = (function (root) {
     this.depsInFormula = function (item) {
 
       var formula = item.formula,
-        deps = item.deps;
+          deps = item.deps;
 
       if (deps) {
         deps = deps.filter(function (id) {
@@ -611,7 +611,7 @@ var ruleJS = (function (root) {
      */
     getCellAlphaNum: function (cell) {
       var num = cell.match(/\d+$/),
-        alpha = cell.replace(num, '');
+          alpha = cell.replace(num, '');
 
       return {
         alpha: alpha,
@@ -627,9 +627,9 @@ var ruleJS = (function (root) {
      */
     changeRowIndex: function (cell, counter) {
       var alphaNum = instance.utils.getCellAlphaNum(cell),
-        alpha = alphaNum.alpha,
-        col = alpha,
-        row = parseInt(alphaNum.num + counter, 10);
+          alpha = alphaNum.alpha,
+          col = alpha,
+          row = parseInt(alphaNum.num + counter, 10);
 
       if (row < 1) {
         row = 1;
@@ -646,16 +646,16 @@ var ruleJS = (function (root) {
      */
     changeColIndex: function (cell, counter) {
       var alphaNum = instance.utils.getCellAlphaNum(cell),
-        alpha = alphaNum.alpha,
-        col = instance.utils.toChar(parseInt(instance.utils.toNum(alpha) + counter, 10)),
-        row = alphaNum.num;
+          alpha = alphaNum.alpha,
+          col = instance.utils.toChar(parseInt(instance.utils.toNum(alpha) + counter, 10)),
+          row = alphaNum.num;
 
       if (!col || col.length === 0) {
         col = 'A';
       }
 
       var fixedCol = alpha[0] === '$' || false,
-        fixedRow = alpha[alpha.length - 1] === '$' || false;
+          fixedRow = alpha[alpha.length - 1] === '$' || false;
 
       col = (fixedCol ? '$' : '') + col;
       row = (fixedRow ? '$' : '') + row;
@@ -671,8 +671,8 @@ var ruleJS = (function (root) {
 
       return formula.replace(/(\$?[A-Za-z]+\$?[0-9]+)/g, function (match) {
         var alphaNum = instance.utils.getCellAlphaNum(match),
-          alpha = alphaNum.alpha,
-          num = alphaNum.num;
+            alpha = alphaNum.alpha,
+            num = alphaNum.num;
 
         if (instance.utils.isNumber(change.col)) {
           num = instance.utils.toNum(alpha);
@@ -701,7 +701,7 @@ var ruleJS = (function (root) {
      */
     updateFormula: function (formula, direction, delta) {
       var type,
-        counter;
+          counter;
 
       // left, right -> col
       if (['left', 'right'].indexOf(direction) !== -1) {
@@ -723,7 +723,7 @@ var ruleJS = (function (root) {
           var alpha = instance.utils.getCellAlphaNum(match).alpha;
 
           var fixedCol = alpha[0] === '$' || false,
-            fixedRow = alpha[alpha.length - 1] === '$' || false;
+              fixedRow = alpha[alpha.length - 1] === '$' || false;
 
           if (type === 'row' && fixedRow) {
             return match;
@@ -794,7 +794,7 @@ var ruleJS = (function (root) {
      */
     cellCoords: function (cell) {
       var num = cell.match(/\d+$/),
-        alpha = cell.replace(num, '');
+          alpha = cell.replace(num, '');
 
       return {
         row: parseInt(num[0], 10) - 1,
@@ -870,7 +870,7 @@ var ruleJS = (function (root) {
       for (var column = cols.start; column <= cols.end; column++) {
         for (var row = rows.start; row <= rows.end; row++) {
           var cellIndex = instance.utils.toChar(column) + (row + 1),
-            cellValue = instance.helper.cellValue.call(this, cellIndex);
+              cellValue = instance.helper.cellValue.call(this, cellIndex);
 
           result.index.push(cellIndex);
           result.value.push(cellValue);
@@ -1103,15 +1103,15 @@ var ruleJS = (function (root) {
      */
     cellValue: function (cell) {
       var value,
-        fnCellValue = instance.custom.cellValue,
-        element = this,
-        item = instance.matrix.getItem(cell);
+          fnCellValue = instance.custom.cellValue,
+          element = this,
+          item = instance.matrix.getItem(cell);
 
       // check if custom cellValue fn exists
       if (instance.utils.isFunction(fnCellValue)) {
 
         var cellCoords = instance.utils.cellCoords(cell),
-          cellId = instance.utils.translateCellCoords({row: element.row, col: element.col});
+            cellId = instance.utils.translateCellCoords({row: element.row, col: element.col});
 
         // get value
         value = item ? item.value : fnCellValue(cellCoords.row, cellCoords.col);
@@ -1165,13 +1165,13 @@ var ruleJS = (function (root) {
      */
     cellRangeValue: function (start, end) {
       var fnCellValue = instance.custom.cellValue,
-        coordsStart = instance.utils.cellCoords(start),
-        coordsEnd = instance.utils.cellCoords(end),
-        element = this;
+          coordsStart = instance.utils.cellCoords(start),
+          coordsEnd = instance.utils.cellCoords(end),
+          element = this;
 
       // iterate cells to get values and indexes
       var cells = instance.utils.iterateCells.call(this, coordsStart, coordsEnd),
-        result = [];
+          result = [];
 
       // check if custom cellValue fn exists
       if (instance.utils.isFunction(fnCellValue)) {
@@ -1223,7 +1223,7 @@ var ruleJS = (function (root) {
    */
   var parse = function (formula, element) {
     var result = null,
-      error = null;
+        error = null;
 
     try {
 
