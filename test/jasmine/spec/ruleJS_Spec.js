@@ -21,6 +21,80 @@ describe('ruleJS', function () {
     expect(rules.parse).toBeDefined();
     expect(getType(rules.parse)).toEqual('[object Function]');
   });
+
+  describe('utils', function () {
+    it('toNum() -> should convert A => 0, Z => 25, AA => 26', function () {
+      expect(rules.utils.toNum('A')).toBe(0);
+      expect(rules.utils.toNum('Z')).toBe(25);
+
+      expect(rules.utils.toNum('AA')).toBe(26);
+      expect(rules.utils.toNum('AB')).toBe(27);
+
+      expect(rules.utils.toNum('$A')).toBe(0);
+      expect(rules.utils.toNum('$A$')).toBe(0);
+      expect(rules.utils.toNum('A$')).toBe(0);
+
+      expect(rules.utils.toNum('$AB')).toBe(27);
+      expect(rules.utils.toNum('$AB$')).toBe(27);
+      expect(rules.utils.toNum('AB$')).toBe(27);
+    });
+
+    it('toChar() -> should convert 0 => A, 25 => Z, 26 => AA', function () {
+      expect(rules.utils.toChar(0)).toBe('A');
+      expect(rules.utils.toChar(25)).toBe('Z');
+      expect(rules.utils.toChar(26)).toBe('AA');
+      expect(rules.utils.toChar(27)).toBe('AB');
+    });
+
+    it('cellCoords() -> should return coordinates for cell ex. A1 -> {row: 0, col:0}', function () {
+      expect(rules.utils.cellCoords('A1')).toEqual({row: 0, col: 0});
+      expect(rules.utils.cellCoords('Z1')).toEqual({row: 0, col: 25});
+      expect(rules.utils.cellCoords('AA1')).toEqual({row: 0, col: 26});
+      expect(rules.utils.cellCoords('AB1')).toEqual({row: 0, col: 27});
+    });
+
+    it('translateCellCoords() -> should translate cell coordinates to cell ex. {row:0, col:0} -> A1', function () {
+      expect(rules.utils.translateCellCoords({row: 0, col: 0})).toBe('A1');
+      expect(rules.utils.translateCellCoords({row: 0, col: 25})).toBe('Z1');
+      expect(rules.utils.translateCellCoords({row: 0, col: 26})).toBe('AA1');
+      expect(rules.utils.translateCellCoords({row: 0, col: 27})).toBe('AB1');
+    });
+
+    it('changeColIndex() -> change column index ex. A1 -> B1', function() {
+      expect(rules.utils.changeColIndex('A1', 1)).toBe('B1');
+      expect(rules.utils.changeColIndex('A1', -1)).toBe('A1');
+      expect(rules.utils.changeColIndex('AA1', 1)).toBe('AB1');
+
+      expect(rules.utils.changeColIndex('Z1', 1)).toBe('AA1');
+      expect(rules.utils.changeColIndex('AA1', -1)).toBe('Z1');
+
+      expect(rules.utils.changeColIndex('A1', 2)).toBe('C1');
+      expect(rules.utils.changeColIndex('AA1', 2)).toBe('AC1');
+
+      expect(rules.utils.changeColIndex('C1', -2)).toBe('A1');
+      expect(rules.utils.changeColIndex('AC1', -2)).toBe('AA1');
+    });
+
+    it('changeRowIndex() -> change row index ex. A1 -> A2', function () {
+      expect(rules.utils.changeRowIndex('A1', 1)).toBe('A2');
+      expect(rules.utils.changeRowIndex('A1', -1)).toBe('A1');
+      expect(rules.utils.changeRowIndex('AA1', 1)).toBe('AA2');
+
+      expect(rules.utils.changeRowIndex('Z1', 1)).toBe('Z2');
+      expect(rules.utils.changeRowIndex('AA1', -1)).toBe('AA1');
+
+      expect(rules.utils.changeRowIndex('A1', 2)).toBe('A3');
+      expect(rules.utils.changeRowIndex('AA1', 2)).toBe('AA3');
+
+      expect(rules.utils.changeRowIndex('C1', -2)).toBe('C1');
+      expect(rules.utils.changeRowIndex('AC1', -2)).toBe('AC1');
+    });
+
+    it('getCellAlphaNum() -> get alpha and number of cell ex. A1 -> {alpha: A, num:1}', function () {
+      expect(rules.utils.getCellAlphaNum('A1')).toEqual({alpha: 'A', num: 1});
+      expect(rules.utils.getCellAlphaNum('AA1')).toEqual({alpha: 'AA', num: 1});
+    });
+  });
 });
 
 describe('parse()', function () {

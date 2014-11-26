@@ -746,13 +746,26 @@ var ruleJS = (function (root) {
      * @returns {Number}
      */
     toNum: function (chr) {
-      chr = instance.utils.clearFormula(chr).split('');
+//      chr = instance.utils.clearFormula(chr).split('');
+//
+//      var base = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
+//          i, j, result = 0;
+//
+//      for (i = 0, j = chr.length - 1; i < chr.length; i += 1, j -= 1) {
+//        result += Math.pow(base.length, j) * (base.indexOf(chr[i]));
+//      }
+//
+//      return result;
 
-      var base = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"],
-        i, j, result = 0;
+      chr = instance.utils.clearFormula(chr);
+      var base = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', i, j, result = 0;
 
       for (i = 0, j = chr.length - 1; i < chr.length; i += 1, j -= 1) {
-        result += Math.pow(base.length, j) * (base.indexOf(chr[i]));
+        result += Math.pow(base.length, j) * (base.indexOf(chr[i]) + 1);
+      }
+
+      if (result) {
+        --result;
       }
 
       return result;
