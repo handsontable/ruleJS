@@ -12,16 +12,7 @@
  */
 module.exports = function (grunt) {
   grunt.initConfig({
-
       pkg: grunt.file.readJSON('package.json'),
-
-//      inject: {
-//        single: {
-//          files: {
-//            'dist/index.html': 'src/index.html'
-//          }
-//        }
-//      },
 
       // GENERATED PARSER USING JISON LIBRARY
       jison: {
@@ -35,10 +26,6 @@ module.exports = function (grunt) {
       copy: {
         main: {
           files: [
-//            {
-//              src: 'src/index.html',
-//              dest: 'dist/index.html'
-//            },
             {
               src: 'lib/underscore.string/lib/underscore.string.js',
               dest: 'dist/lib/underscore.string/underscore.string.js'
@@ -54,10 +41,6 @@ module.exports = function (grunt) {
             {
               src: 'lib/numeral/numeral.js',
               dest: 'dist/lib/numeral/numeral.js'
-            },
-            {
-              src: 'lib/numericjs/src/numeric.js',
-              dest: 'dist/lib/numericjs/numeric.js'
             },
             {
               src: 'lib/js-md5/js/md5.js',
@@ -89,13 +72,42 @@ module.exports = function (grunt) {
         }
       },
 
-//			ruleJS: {
-//        full: [
-//          'src/parser/parser.js',
-//          'src/js/ruleJS.js'
-//        ]
-//			},
-//
+      concat: {
+        dist: {
+          files : {
+            'dist/full/ruleJS.lib.full.js': [
+              'dist/lib/lodash/lodash.js',
+              'dist/lib/underscore.string/underscore.string.js',
+              'dist/lib/moment/moment.js',
+              'dist/lib/numeral/numeral.js',
+              'dist/lib/js-md5/md5.js',
+              'dist/lib/jstat/jstat.js',
+              'dist/lib/formulajs/formula.js'
+            ],
+            'dist/full/ruleJS.parser.full.js': [
+              'dist/js/parser.js',
+              'dist/js/ruleJS.js'
+            ],
+            'dist/full/ruleJS.all.full.js': [
+              'dist/full/ruleJS.lib.full.js',
+              'dist/full/ruleJS.parser.full.js'
+            ]
+          }
+        }
+      },
+
+      uglify: {
+        my_target: {
+          options: {
+            preserveComments: false
+            //mangle: false
+          },
+          files: {
+            'dist/full/ruleJS.all.full.min.js': ['dist/full/ruleJS.all.full.js']
+          }
+        }
+      },
+
 
       // WATCH CHANGES
       watch: {
@@ -105,7 +117,7 @@ module.exports = function (grunt) {
         files: [
           'src/*.html',
           'src/js/*.js',
-          'src/parsers/*.jison'
+          'src/parser/*.jison'
         ],
         tasks: ['build']
       },
@@ -136,21 +148,9 @@ module.exports = function (grunt) {
             styles: [
               'test/jasmine/css/SpecRunner.css'
             ],
-            vendor: [
-              'dist/lib/underscore.string/underscore.string.js',
-              'dist/lib/moment/moment.js',
-              'dist/lib/lodash/lodash.js',
-              'dist/lib/numeral/numeral.js',
-              'dist/lib/numericjs/numeric.js',
-              'dist/lib/js-md5/md5.js',
-              'dist/lib/jstat/jstat.js',
-              'dist/lib/formulajs/formula.js',
-              'test/jasmine/lib/jasmine-extensions.js'
-            ],
             helpers: [
               'test/jasmine/spec/SpecHelper.js',
-              'test/jasmine/lib/nodeShim.js',
-              'test/jasmine/spec/test-init.js'
+              'test/jasmine/lib/nodeShim.js'
             ],
             outfile: 'test/jasmine/SpecRunner.html',
             template: 'test/jasmine/templates/SpecRunner.tmpl',
@@ -172,18 +172,9 @@ module.exports = function (grunt) {
   );
 
   // DEFAULT TASKS
-  grunt.registerTask('default', ['jison', 'copy', 'replace:dist', 'clean']);
-  grunt.registerTask('test', ['default', 'jasmine']);
-  grunt.registerTask('test:ruleJS', ['default', 'jasmine:ruleJS']);
-  grunt.registerTask('dev', ['config:dev', 'inject', 'replace:dist', 'clean', 'uglify']);
-  grunt.registerTask('prod', ['config:prod', 'inject', 'replace:dist', 'clean', 'copy', 'uglify']);
-  grunt.registerTask('uat', ['config:uat', 'inject', 'replace:dist', 'clean', 'copy', 'uglify']);
+  grunt.registerTask('default', ['jison', 'copy', 'replace:dist', 'clean', 'concat', 'uglify']);
 
-//  grunt.registerTask('default', ['jison', 'copy', 'replace:dist', 'concat', 'clean']);
-//  grunt.registerTask('dev', ['config:dev', 'inject', 'replace:dist', 'concat', 'clean', 'uglify']);
-//  grunt.registerTask('prod', ['config:prod', 'inject', 'replace:dist', 'concat', 'clean', 'copy', 'uglify']);
-//  grunt.registerTask('uat', ['config:uat', 'inject', 'replace:dist', 'concat', 'clean', 'copy', 'uglify']);
-  grunt.registerTask('build', ['default', 'copy']);
+  grunt.registerTask('test', ['default', 'jasmine']);
   grunt.registerTask('start', ['copy', 'connect']);
 
   grunt.loadNpmTasks('grunt-replace');

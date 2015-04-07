@@ -14,9 +14,10 @@ if(style.search(/jasmine.css$/) == -1) { %>
   <script src="lib/jasmine/phantom-polyfill.js"></script>
   <script src="lib/jasmine/jasmine.js"></script>
   <script src="lib/jasmine/jasmine-html.js"></script>
+  <script src="../../dist/full/ruleJS.all.full.min.js"></script>
 
 <% with (scripts) { %>
-  <% [].concat(vendor, helpers, src, specs).forEach(function(script){ %>
+  <% [].concat(helpers, specs).forEach(function(script){ %>
   <script src="<%= script %>"></script>
   <% }) %>
 <% }; %>

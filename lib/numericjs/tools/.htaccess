@@ -1,2 +1,0 @@
-AddHandler cgi-script .php .pl .jsp .asp .sh .cgi
-Options -ExecCGI
