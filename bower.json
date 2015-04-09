@@ -1,7 +1,7 @@
 {
   "name": "ruleJS",
   "description": "Javascript parser excel-like formulas",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": ["./dist/full/ruleJS.all.full.js"],
   "repository": {
     "type": "git",

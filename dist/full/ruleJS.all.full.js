@@ -20831,7 +20831,7 @@ var ruleJS = (function (root) {
    * current version
    * @type {string}
    */
-  var version = '0.0.2';
+  var version = '0.0.3';
 
   /**
    * parser object delivered by jison library
