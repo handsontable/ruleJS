@@ -175,7 +175,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['jison', 'copy', 'replace:dist', 'clean', 'concat', 'uglify']);
 
   grunt.registerTask('test', ['default', 'jasmine']);
-  grunt.registerTask('start', ['copy', 'connect']);
+  grunt.registerTask('start', ['default', 'connect']);
 
   grunt.loadNpmTasks('grunt-replace');
   grunt.loadNpmTasks('grunt-contrib-clean');
