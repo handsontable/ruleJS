@@ -73,7 +73,8 @@ var ruleJS = (function (root) {
       {type: 'NAME', output: '#NAME?'},
       {type: 'NUM', output: '#NUM!'},
       {type: 'NOT_AVAILABLE', output: '#N/A!'},
-      {type: 'ERROR', output: '#ERROR'}
+      {type: 'ERROR', output: '#ERROR'},
+      {type: 'NEED_UPDATE', output: '#NEED_UPDATE'}
     ],
     /**
      * get error by type
@@ -1029,6 +1030,11 @@ var ruleJS = (function (root) {
       number2 = helper.number(number2);
 
       if (isNaN(number1) || isNaN(number2)) {
+
+        if (number1[0] === '=' || number2[0] === '=') {
+          throw Error('NEED_UPDATE');
+        }
+
         throw Error('VALUE');
       }
 
