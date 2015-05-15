@@ -1,6 +1,6 @@
 RuleJS
 =======
-Like excel library to parse formulas ([demo](http://handsontable.github.io/RuleJS/))
+Like excel library to parse formulas ([demo](http://handsontable.github.io/ruleJS/))
 
 ## How to run
 - npm install
