@@ -1,3 +1,3 @@
 # ruleJS
-Javascript library to parse excel formulas
+Javascript library to parse excel formulas.
 
