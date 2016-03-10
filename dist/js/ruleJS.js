@@ -15,7 +15,7 @@ var ruleJS = (function (root) {
    * current version
    * @type {string}
    */
-  var version = '0.0.3';
+  var version = '0.0.5';
 
   /**
    * parser object delivered by jison library
@@ -118,7 +118,7 @@ var ruleJS = (function (root) {
      * form elements, which can be parsed
      * @type {string[]}
      */
-    var formElements = ['input[type=text]', '[data-formula]'];
+    var formElements = ['input[type=text]', '[data-formula]', 'textarea'];
 
     var listen = function () {
       if (document.activeElement && document.activeElement !== document.body) {
@@ -388,7 +388,7 @@ var ruleJS = (function (root) {
       allDependencies.forEach(function (refId) {
         var item = instance.matrix.getItem(refId);
         if (item && item.formula) {
-          var refElement = document.getElementById(refId);
+          var refElement = rootElement.querySelector('#' + refId);//document.getElementById(refId);
           calculateElementFormula(item.formula, refElement);
         }
       });
@@ -448,6 +448,8 @@ var ruleJS = (function (root) {
       var id = element.getAttribute('id');
 
       // on db click show formula
+      //remove before attach
+      element.removeEventListener('dblclick');
       element.addEventListener('dblclick', function () {
         var item = instance.matrix.getItem(id);
 
@@ -457,6 +459,7 @@ var ruleJS = (function (root) {
         }
       });
 
+      element.removeEventListener('blur');
       element.addEventListener('blur', function () {
         var item = instance.matrix.getItem(id);
 
@@ -470,6 +473,7 @@ var ruleJS = (function (root) {
       });
 
       // if pressed ESC restore original value
+      element.removeEventListener('keyup');
       element.addEventListener('keyup', function (event) {
         switch (event.keyCode) {
           case 13: // ENTER
@@ -481,6 +485,7 @@ var ruleJS = (function (root) {
       });
 
       // re-calculate formula if ref cells value changed
+      element.removeEventListener('change');
       element.addEventListener('change', function () {
         // reset and remove item
         instance.matrix.removeItem(id);
@@ -1134,7 +1139,7 @@ var ruleJS = (function (root) {
       } else {
 
         // get value
-        value = item ? item.value : document.getElementById(cell).value;
+        value = item ? item.value : rootElement.querySelector('#' + cell).value;//document.getElementById(cell).value;
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
@@ -1301,7 +1306,8 @@ var ruleJS = (function (root) {
     version: version,
     utils: utils,
     helper: helper,
-    parse: parse
+    parse: parse,
+    rootElement : rootElement
   };
 
 });
