@@ -1273,7 +1273,7 @@ var ruleJS = (function (root) {
      * @param {Object} props
      */
     this.updateElementItem = function (element, props) {
-      var id = element.getAttribute('id'),
+      var id = element.getAttribute('cellid'),
           item = instance.matrix.getItem(id);
 
       instance.matrix.updateItem(item, props);
@@ -1341,7 +1341,7 @@ var ruleJS = (function (root) {
      * @returns {Array}
      */
     this.getElementDependencies = function (element) {
-      return instance.matrix.getDependencies(element.getAttribute('id'));
+      return instance.matrix.getDependencies(element.getAttribute('cellid'));
     };
 
     /**
@@ -1350,12 +1350,12 @@ var ruleJS = (function (root) {
      */
     var recalculateElementDependencies = function (element) {
       var allDependencies = instance.matrix.getElementDependencies(element),
-          id = element.getAttribute('id');
+          id = element.getAttribute('cellid');
 
       allDependencies.forEach(function (refId) {
         var item = instance.matrix.getItem(refId);
         if (item && item.formula) {
-          var refElement = rootElement.querySelector('#' + refId);//document.getElementById(refId);
+          var refElement = rootElement.querySelector('[cellid=' + refId + ']');//document.getElementById(refId);
           calculateElementFormula(item.formula, refElement);
         }
       });
@@ -1392,7 +1392,7 @@ var ruleJS = (function (root) {
      */
     var registerElementInMatrix = function (element) {
 
-      var id = element.getAttribute('id'),
+      var id = element.getAttribute('cellid'),
           formula = element.getAttribute('data-formula');
 
       if (formula) {
@@ -1412,11 +1412,9 @@ var ruleJS = (function (root) {
      * @param element
      */
     var registerElementEvents = function (element) {
-      var id = element.getAttribute('id');
+      var id = element.getAttribute('cellid');
 
       // on db click show formula
-      //remove before attach
-      element.removeEventListener('dblclick');
       element.addEventListener('dblclick', function () {
         var item = instance.matrix.getItem(id);
 
@@ -1426,7 +1424,6 @@ var ruleJS = (function (root) {
         }
       });
 
-      element.removeEventListener('blur');
       element.addEventListener('blur', function () {
         var item = instance.matrix.getItem(id);
 
@@ -1440,7 +1437,6 @@ var ruleJS = (function (root) {
       });
 
       // if pressed ESC restore original value
-      element.removeEventListener('keyup');
       element.addEventListener('keyup', function (event) {
         switch (event.keyCode) {
           case 13: // ENTER
@@ -1452,7 +1448,6 @@ var ruleJS = (function (root) {
       });
 
       // re-calculate formula if ref cells value changed
-      element.removeEventListener('change');
       element.addEventListener('change', function () {
         // reset and remove item
         instance.matrix.removeItem(id);
@@ -2106,7 +2101,7 @@ var ruleJS = (function (root) {
       } else {
 
         // get value
-        value = item ? item.value : rootElement.querySelector('#' + cell).value;//document.getElementById(cell).value;
+        value = item ? item.value : rootElement.querySelector('[cellid=' + cell + ']').value;//document.getElementById(cell).value;
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
@@ -2211,7 +2206,7 @@ var ruleJS = (function (root) {
       var id;
 
       if (element instanceof HTMLElement) {
-        id = element.getAttribute('id');
+        id = element.getAttribute('cellid');
       } else if (element && element.id) {
         id = element.id;
       }
