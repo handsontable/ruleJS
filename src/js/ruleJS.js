@@ -1,3 +1,7 @@
+/** 
++ * @param {String|Element} root takes the element name 
++ *                              or the element itself
++ */
 var ruleJS = (function (root) {
   'use strict';
 
@@ -9,7 +13,8 @@ var ruleJS = (function (root) {
   /**
    * root element
    */
-  var rootElement = document.getElementById(root) || null;
+  var rootElement = root.nodeType === 1 && root || 
+                    document.getElementById(root) || null;
 
   /**
    * current version
@@ -518,7 +523,10 @@ var ruleJS = (function (root) {
      * scan the form and build the calculation matrix
      */
     this.scan = function () {
-      var $totalElements = rootElement.querySelectorAll(formElements);
+      var $totalElements = 
+          rootElement.shadowRoot && 
+          rootElement.shadowRoot.querySelectorAll(formElements) ||
+          rootElement.querySelectorAll(formElements);
 
       // iterate through elements contains specified attributes
       [].slice.call($totalElements).forEach(function ($item) {
