@@ -1142,7 +1142,13 @@ var ruleJS = (function (root) {
       } else {
 
         // get value
-        value = item ? item.value : document.getElementById(cell).value;
+        if(item) {
+          value = item.value;
+        } else {
+          value = rootElement.shadowRoot && 
+                  rootElement.shadowRoot.querySelector('#' + cell).value ||
+                  document.getElementById(cell).value;
+        }
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
