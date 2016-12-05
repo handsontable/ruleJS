@@ -1,3 +1,7 @@
+/** 
++ * @param {String|Element} root takes the element name 
++ *                              or the element itself
++ */
 var ruleJS = (function (root) {
   'use strict';
 
@@ -9,13 +13,14 @@ var ruleJS = (function (root) {
   /**
    * root element
    */
-  var rootElement = document.getElementById(root) || null;
+  var rootElement = root.nodeType === 1 && root || 
+                    document.getElementById(root) || null;
 
   /**
    * current version
    * @type {string}
    */
-  var version = '0.0.3';
+  var version = '0.0.5';
 
   /**
    * parser object delivered by jison library
@@ -518,7 +523,10 @@ var ruleJS = (function (root) {
      * scan the form and build the calculation matrix
      */
     this.scan = function () {
-      var $totalElements = rootElement.querySelectorAll(formElements);
+      var $totalElements = 
+          rootElement.shadowRoot && 
+          rootElement.shadowRoot.querySelectorAll(formElements) ||
+          rootElement.querySelectorAll(formElements);
 
       // iterate through elements contains specified attributes
       [].slice.call($totalElements).forEach(function ($item) {
@@ -1134,7 +1142,13 @@ var ruleJS = (function (root) {
       } else {
 
         // get value
-        value = item ? item.value : document.getElementById(cell).value;
+        if(item) {
+          value = item.value;
+        } else {
+          value = rootElement.shadowRoot && 
+                  rootElement.shadowRoot.querySelector('#' + cell).value ||
+                  document.getElementById(cell).value;
+        }
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
