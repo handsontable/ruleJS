@@ -15,7 +15,7 @@ var ruleJS = (function (root) {
    * current version
    * @type {string}
    */
-  var version = '0.0.3';
+  var version = '0.0.5';
 
   /**
    * parser object delivered by jison library
@@ -118,7 +118,7 @@ var ruleJS = (function (root) {
      * form elements, which can be parsed
      * @type {string[]}
      */
-    var formElements = ['input[type=text]', '[data-formula]'];
+    var formElements = ['input[type=text]', '[data-formula]', 'textarea'];
 
     var listen = function () {
       if (document.activeElement && document.activeElement !== document.body) {
@@ -306,7 +306,7 @@ var ruleJS = (function (root) {
      * @param {Object} props
      */
     this.updateElementItem = function (element, props) {
-      var id = element.getAttribute('id'),
+      var id = element.getAttribute('cellid'),
           item = instance.matrix.getItem(id);
 
       instance.matrix.updateItem(item, props);
@@ -374,7 +374,7 @@ var ruleJS = (function (root) {
      * @returns {Array}
      */
     this.getElementDependencies = function (element) {
-      return instance.matrix.getDependencies(element.getAttribute('id'));
+      return instance.matrix.getDependencies(element.getAttribute('cellid'));
     };
 
     /**
@@ -383,12 +383,12 @@ var ruleJS = (function (root) {
      */
     var recalculateElementDependencies = function (element) {
       var allDependencies = instance.matrix.getElementDependencies(element),
-          id = element.getAttribute('id');
+          id = element.getAttribute('cellid');
 
       allDependencies.forEach(function (refId) {
         var item = instance.matrix.getItem(refId);
         if (item && item.formula) {
-          var refElement = document.getElementById(refId);
+          var refElement = rootElement.querySelector('[cellid=' + refId + ']');//document.getElementById(refId);
           calculateElementFormula(item.formula, refElement);
         }
       });
@@ -425,7 +425,7 @@ var ruleJS = (function (root) {
      */
     var registerElementInMatrix = function (element) {
 
-      var id = element.getAttribute('id'),
+      var id = element.getAttribute('cellid'),
           formula = element.getAttribute('data-formula');
 
       if (formula) {
@@ -445,7 +445,7 @@ var ruleJS = (function (root) {
      * @param element
      */
     var registerElementEvents = function (element) {
-      var id = element.getAttribute('id');
+      var id = element.getAttribute('cellid');
 
       // on db click show formula
       element.addEventListener('dblclick', function () {
@@ -1134,7 +1134,7 @@ var ruleJS = (function (root) {
       } else {
 
         // get value
-        value = item ? item.value : document.getElementById(cell).value;
+        value = item ? item.value : rootElement.querySelector('[cellid=' + cell + ']').value;//document.getElementById(cell).value;
 
         //update dependencies
         instance.matrix.updateElementItem(element, {deps: [cell]});
@@ -1239,7 +1239,7 @@ var ruleJS = (function (root) {
       var id;
 
       if (element instanceof HTMLElement) {
-        id = element.getAttribute('id');
+        id = element.getAttribute('cellid');
       } else if (element && element.id) {
         id = element.id;
       }
@@ -1301,7 +1301,8 @@ var ruleJS = (function (root) {
     version: version,
     utils: utils,
     helper: helper,
-    parse: parse
+    parse: parse,
+    rootElement : rootElement
   };
 
 });
